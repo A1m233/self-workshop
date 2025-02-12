@@ -9,45 +9,57 @@ import ExpiredTodosPage from "@/pages/todo/ExpiredTodosPage";
 import AllTodosPage from "@/pages/todo/AllTodosPage";
 import DirectoryPage from "@/pages/blog/DirectoryPage";
 import DetailPage from "@/pages/blog/DetailPage";
+import MainLayout from "@/layouts/MainLayout";
+import NotFoundPage from "@/pages/NotFoundPage";
 
 const router = createBrowserRouter(
 [
   {
-    path: '/',
-    element: <HomePage />,
-  },
-  {
-    path: '/todo/statistics',
-    element: <StatisticsPage />,
-  },
-  {
-    path: '/todo/list/all',
-    element: <AllTodosPage />,
-  },
-  {
-    path: '/todo/list/finished',
-    element: <FinishedTodosPage />,
-  },
-  {
-    path: '/todo/list/unfinished',
-    element: <UnfinishedTodosPage />,
-  },
-  {
-    path: '/todo/list/due',
-    element: <DueTodosPage />,
-  },
-  {
-    path: '/todo/list/expired',
-    element: <ExpiredTodosPage />,
-  },
-  {
-    path: '/blog/directory',
-    element: <DirectoryPage />,
-  },
-  {
-    path: '/blog/detail/:name',
-    element: <DetailPage />,
-  },
+    element: <MainLayout />,
+    children:
+    [
+      {
+        path: '/',
+        element: <HomePage />,
+      },
+      {
+        path: '/todo/statistics',
+        element: <StatisticsPage />,
+      },
+      {
+        path: '/todo/list/all',
+        element: <AllTodosPage />,
+      },
+      {
+        path: '/todo/list/finished',
+        element: <FinishedTodosPage />,
+      },
+      {
+        path: '/todo/list/unfinished',
+        element: <UnfinishedTodosPage />,
+      },
+      {
+        path: '/todo/list/due',
+        element: <DueTodosPage />,
+      },
+      {
+        path: '/todo/list/expired',
+        element: <ExpiredTodosPage />,
+      },
+      {
+        path: '/blog/directory',
+        element: <DirectoryPage />,
+      },
+      {
+        path: '/blog/detail/:name',
+        element: <DetailPage />,
+      },
+      {
+        path: '*',
+        element: <NotFoundPage />,
+      },
+    ]
+  }
 ]);
 
 export default router;

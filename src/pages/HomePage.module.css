@@ -1,0 +1,19 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  margin: 20px;
+  gap: 20px;
+}
+.calendar-wrapper {
+  height: 25vh;
+  width: 85vw;
+  margin-bottom: 20px;
+}
+.reminder-container {
+  width: 85vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
