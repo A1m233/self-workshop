@@ -1,4 +1,4 @@
-while ($true) {
+﻿while ($true) {
     git push
     if ($LASTEXITCODE -eq 0) {
         Write-Host "push成功！"
