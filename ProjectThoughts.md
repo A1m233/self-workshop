@@ -133,3 +133,24 @@ footer：pagination
 ...
 
 还需要有一个组件来表示没有找到对应的文件。
+
+## redux
+
+### features/todolist/todolistSlice
+
+#### 数据
+
+`Todo[]`
+
+```ts
+interface Todo
+{
+	state: boolean,
+    content: string,
+    expiration: number, // 时间戳？
+};
+```
+
+#### 功能
+
+编辑到期时间，编辑内容，切换完成状态，添加待办事项，删除待办事项。

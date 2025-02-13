@@ -5,7 +5,6 @@ import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
 import styles from './HomePage.module.css';
 import { Card } from "antd";
-import { ExclamationCircleFilled, InfoCircleFilled } from "@ant-design/icons/lib/icons";
 import { Link } from "react-router-dom";
 
 const HomePage: FC = () =>
@@ -40,6 +39,7 @@ const HomePage: FC = () =>
             { date: '2025-02-11', count: 2 },
             { date: '2025-02-12', count: 4 },
             { date: '2025-02-13', count: 3 },
+            { date: '2025-02-14', count: 1 },
           ]}/>
         </div>
       </Card>
