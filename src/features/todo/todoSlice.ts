@@ -1,40 +1,49 @@
+import { TodoType } from "@/types/todo";
 import { createSlice } from "@reduxjs/toolkit";
 
-interface Todo
-{
-	state: boolean,
-  content: string,
-  expiration: number, // 时间戳？
-};
 
 export const todoSlice = createSlice(
 {
   name: 'todo',
   initialState:
   {
-    todolist: [] as Todo[],
+    todoList: [] as TodoType[],
+    currentId: 1,
   },
   reducers:
   {
     addTodo(state, action)
     {
-      
+      const {isFinished, content, expiration} = action.payload;
+      console.log(isFinished, content, expiration)
+      state.todoList.push(
+      {
+        isFinished,
+        content,
+        expiration,
+        id: state.currentId,
+      });
+      state.currentId++;
     },
     deleteTodo(state, action)
     {
-      
+      const id = action.payload;
+      state.todoList = state.todoList.filter(element => element.id !== id);
     },
     switchTodoState(state, action)
     {
-
+      const id = action.payload;
+      state.todoList = state.todoList.map(element => element.id === id ? element : {...element, isFinished: !element.isFinished});
     },
     editTodoContent(state, action)
     {
-
+      const {id, content} = action.payload;
+      state.todoList = state.todoList.map(element => element.id === id ? element : {...element, content});
     },
     editTodoExpiration(state, action)
     {
-
+      const {id, expiration} = action.payload;
+      state.todoList = state.todoList.map(element => element.id === id ? element : {...element, expiration});
     },
   },
 });

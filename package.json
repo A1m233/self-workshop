@@ -20,7 +20,8 @@
     "react-helmet": "^6.1.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.5",
-    "redux": "^5.0.1"
+    "redux": "^5.0.1",
+    "redux-persist": "^6.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -28,6 +29,7 @@
     "@types/react-calendar-heatmap": "^1.9.0",
     "@types/react-dom": "^19.0.3",
     "@types/react-helmet": "^6.1.11",
+    "@types/redux-persist": "^4.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "eslint": "^9.19.0",
