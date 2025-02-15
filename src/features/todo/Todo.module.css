@@ -1,0 +1,25 @@
+.card-content {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+.card-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.button-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.todo-card {
+  margin-top: 20px;
+  padding: 0px !important;
+  border: 10px !important;
+}
+.checkbox {
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+}

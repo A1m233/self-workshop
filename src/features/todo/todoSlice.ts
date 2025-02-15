@@ -15,8 +15,7 @@ export const todoSlice = createSlice(
     addTodo(state, action)
     {
       const {isFinished, content, expiration} = action.payload;
-      console.log(isFinished, content, expiration)
-      state.todoList.push(
+      state.todoList.unshift(
       {
         isFinished,
         content,
@@ -33,21 +32,16 @@ export const todoSlice = createSlice(
     switchTodoState(state, action)
     {
       const id = action.payload;
-      state.todoList = state.todoList.map(element => element.id === id ? element : {...element, isFinished: !element.isFinished});
+      state.todoList = state.todoList.map(element => element.id !== id ? element : {...element, isFinished: !element.isFinished});
     },
-    editTodoContent(state, action)
+    editTodo(state, action)
     {
-      const {id, content} = action.payload;
-      state.todoList = state.todoList.map(element => element.id === id ? element : {...element, content});
-    },
-    editTodoExpiration(state, action)
-    {
-      const {id, expiration} = action.payload;
-      state.todoList = state.todoList.map(element => element.id === id ? element : {...element, expiration});
+      const {id, content, expiration} = action.payload;
+      state.todoList = state.todoList.map(element => element.id !== id ? element : {...element, content, expiration});
     },
   },
 });
 
-export const { addTodo, deleteTodo, switchTodoState, editTodoContent, editTodoExpiration } = todoSlice.actions;
+export const { addTodo, deleteTodo, switchTodoState, editTodo } = todoSlice.actions;
 
 export default todoSlice.reducer;

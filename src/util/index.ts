@@ -8,7 +8,7 @@ function isDue(timestamp: number)
 };
 function isExpired(timestamp: number)
 {
-  return timestamp <= Date.now();
+  return timestamp < Date.now();
 }
 export function filterChecker(pageType: string, element: TodoType)
 {
@@ -26,6 +26,6 @@ export function filterChecker(pageType: string, element: TodoType)
   }
   if (pageType === '未到期但未完成')
   {
-    return !element.isFinished && !isDue(element.expiration);
+    return !element.isFinished && !isExpired(element.expiration) && !isDue(element.expiration);
   }
 };
