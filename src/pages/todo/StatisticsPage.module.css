@@ -1,0 +1,9 @@
+.card-group {
+  display: grid;
+  place-items: center;  /* 等同于 justify-items: center 和 align-items: center */
+  height: 85vh;
+}
+
+.row {
+  min-width: 100%;
+}

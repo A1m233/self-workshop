@@ -109,7 +109,7 @@ const TodoModal = forwardRef<TodoModalHandles, PropsType>((props, ref) =>
           label="内容"
           name="content"
           rules={[{ required: true, message: '请输入待办事项内容' }]}>
-            <Input.TextArea placeholder="请输入待办事项内容"/>
+            <Input.TextArea placeholder="请输入待办事项内容" allowClear/>
           </Form.Item>
         </Form>
       </Modal>

@@ -1,4 +1,4 @@
-import { TodoType } from "@/types/todo";
+import { PageType, TodoType } from "@/types/todo";
 
 function isDue(timestamp: number)
 {
@@ -10,7 +10,7 @@ function isExpired(timestamp: number)
 {
   return timestamp < Date.now();
 }
-export function filterChecker(pageType: string, element: TodoType)
+export function todoTypeChecker(pageType: PageType, element: TodoType)
 {
   if (pageType === '即将到期')
   {
@@ -24,7 +24,7 @@ export function filterChecker(pageType: string, element: TodoType)
   {
     return element.isFinished;
   }
-  if (pageType === '未到期但未完成')
+  if (pageType === '未将到期且未完成')
   {
     return !element.isFinished && !isExpired(element.expiration) && !isDue(element.expiration);
   }

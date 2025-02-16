@@ -5,3 +5,5 @@ export interface TodoType
   expiration: number, // 时间戳？
   id: number,
 };
+
+export type PageType = '即将到期' | '到期' | '已完成' | '未将到期且未完成';

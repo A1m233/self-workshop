@@ -7,9 +7,11 @@
   gap: 20px;
 }
 .calendar-wrapper {
-  height: 25vh;
+  height: 30vh;
   width: 85vw;
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .reminder-container {
   width: 85vw;

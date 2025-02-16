@@ -1,7 +1,7 @@
 .card-content {
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: 16px;
 }
 .card-footer {
   display: flex;
@@ -14,9 +14,10 @@
   align-items: center;
 }
 .todo-card {
-  margin-top: 20px;
-  padding: 0px !important;
-  border: 10px !important;
+  margin-top: 16px;
+}
+.todo-card-body {
+  padding: 0px 14px 0 14px !important;
 }
 .checkbox {
   display: flex;

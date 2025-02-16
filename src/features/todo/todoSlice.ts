@@ -1,4 +1,6 @@
-import { TodoType } from "@/types/todo";
+import { RootState } from "@/app/store";
+import { PageType, TodoType } from "@/types/todo";
+import { todoTypeChecker } from "@/util";
 import { createSlice } from "@reduxjs/toolkit";
 
 
@@ -45,3 +47,22 @@ export const todoSlice = createSlice(
 export const { addTodo, deleteTodo, switchTodoState, editTodo } = todoSlice.actions;
 
 export default todoSlice.reducer;
+
+export const selectTodoList = (state: RootState) => state.todo.todoList;
+
+function selectCount(type: PageType)
+{
+  return (state: RootState) =>
+  {
+    let todoList = state.todo.todoList;
+    return todoList.reduce((accmulator, todo) =>
+    {
+      if (todoTypeChecker(type, todo))accmulator++;
+      return accmulator;
+    }, 0);
+  };
+}
+export const selectDueCount = selectCount('即将到期');
+export const selectUnfinishedCount = selectCount('未将到期且未完成');
+export const selectFinishedCount = selectCount('已完成');
+export const selectExpiredCount = selectCount('到期');

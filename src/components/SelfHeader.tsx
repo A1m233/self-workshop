@@ -6,6 +6,8 @@ import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectDueCount, selectExpiredCount, selectUnfinishedCount } from '@/features/todo/todoSlice';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -32,7 +34,7 @@ const items: MenuItem[] =
         [
           { label: <Link to='/todo/list/all'>全部待办事项</Link>, key: 'all' },
           { label: <Link to='/todo/list/finished'>已完成待办事项</Link>, key: 'finished' },
-          { label: <Link to='/todo/list/unfinished'>未完成且尚未即将到期待办事项</Link>, key: 'unfinished' },
+          { label: <Link to='/todo/list/unfinished'>未将到期且未完成待办事项</Link>, key: 'unfinished' },
           { label: <Link to='/todo/list/due'>即将到期待办事项</Link>, key: 'due' },
           { label: <Link to='/todo/list/expired'>到期待办事项</Link>, key: 'expired' },
         ],
@@ -64,15 +66,13 @@ const items: MenuItem[] =
       },
     ],
   },
-  // {
-  //   label: <a>'待办事项：1 个即将过期，除此之外还有 1 个未完成'</a>,
-  //   key: 'dues and expireds',
-  //   icon: <AlertFilled />,
-  //   disabled: true,
-  // },
 ];
 const SelfHeader: FC = () =>
 {
+  const dueCount = useSelector(selectDueCount);
+  const unfinishedCount = useSelector(selectUnfinishedCount);
+  const expiredCount = useSelector(selectExpiredCount);
+
   return (
     <Header className='antd-header'>
       <div style={{flex: 1}}>
@@ -80,7 +80,7 @@ const SelfHeader: FC = () =>
       </div>
       <div className='reminder-wrapper'>
         <p className='reminder'>
-          <AlertFilled /> 待办事项：1 个<Link to="/todo/list/due">即将过期</Link>，除此之外还有 1 个<Link to="/todo/list/unfinished">未完成</Link>
+          <AlertFilled /> 待办事项：{expiredCount} 个<Link to="/todo/list/expired">已过期</Link>，{dueCount} 个<Link to="/todo/list/due">即将过期</Link>，除此之外还有 {unfinishedCount} 个<Link to="/todo/list/unfinished">未完成</Link>
         </p>
       </div>
     </Header>

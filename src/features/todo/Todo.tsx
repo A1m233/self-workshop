@@ -31,9 +31,8 @@ const TodoInner: FC<PropsType> = props =>
       todoModalRef.current.showModal();
     }
   };
-  const onChange: CheckboxProps['onChange'] = e =>
+  const onChange: CheckboxProps['onChange'] = () =>
   {
-    console.log(`checked = ${e.target.checked}`);
     dispatch(switchTodoState(id));
   };
   const handleCopy: ButtonProps['onClick'] = async () =>
@@ -65,7 +64,10 @@ const TodoInner: FC<PropsType> = props =>
 
   return (
     <>
-      <Card className={styles['todo-card']} hoverable>
+      <Card
+      classNames={{body: styles['todo-card-body']}}
+      className={styles['todo-card']}
+      hoverable>
         <TodoModal
         ref={todoModalRef}
         expiration={expiration}
