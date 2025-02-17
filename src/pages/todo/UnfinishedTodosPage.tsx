@@ -1,7 +1,7 @@
 import { TITLE_PREFIX, TODO_PREFIX } from "@/constant";
 import TodoList from "@/features/todo/TodoList";
 import { selectTodoList } from "@/features/todo/todoSlice";
-import { todoTypeChecker } from "@/util";
+import { todoTypeChecker } from "@/util/todo";
 import { useTitle } from "ahooks";
 import { FC } from "react";
 import { useSelector } from "react-redux";

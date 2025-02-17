@@ -1,0 +1,18 @@
+.container {
+  min-height: 100vh;
+  background-color: white;
+  padding: 20px;
+}
+:global(.ant-tree-title > span > button:nth-child(2))  {
+  margin-left: auto;
+}
+:global(.ant-tree-title > span > button)  {
+  font-size: 15px;
+}
+:global(.ant-tree-title > span > button:hover)  {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+.title-render {
+  display: inline-flex;
+  width: 97%;
+}

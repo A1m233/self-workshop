@@ -30,7 +30,6 @@ const TodoList: FC<PropsType> = props =>
   const onChange: InputProps['onChange'] = e =>
   {
     setInputContent(e.target.value);
-    console.log(e.target.value);
   }
   function searchTodoList()
   {

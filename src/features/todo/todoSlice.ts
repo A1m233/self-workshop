@@ -1,6 +1,7 @@
+// todoSlice.ts
 import { RootState } from "@/app/store";
 import { PageType, TodoType } from "@/types/todo";
-import { todoTypeChecker } from "@/util";
+import { todoTypeChecker } from "@/util/todo";
 import { createSlice } from "@reduxjs/toolkit";
 
 
@@ -23,6 +24,7 @@ export const todoSlice = createSlice(
         content,
         expiration,
         id: state.currentId,
+        hasRemind: false,
       });
       state.currentId++;
     },
@@ -41,10 +43,15 @@ export const todoSlice = createSlice(
       const {id, content, expiration} = action.payload;
       state.todoList = state.todoList.map(element => element.id !== id ? element : {...element, content, expiration});
     },
+    setTodoHasRemind(state, action)
+    {
+      const id = action.payload;
+      state.todoList = state.todoList.map(element => element.id !== id ? element : {...element, hasRemind: true});
+    },
   },
 });
 
-export const { addTodo, deleteTodo, switchTodoState, editTodo } = todoSlice.actions;
+export const { addTodo, deleteTodo, switchTodoState, editTodo, setTodoHasRemind } = todoSlice.actions;
 
 export default todoSlice.reducer;
 

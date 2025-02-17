@@ -1,3 +1,4 @@
+// Todo.tsx
 import type { TodoType } from "@/types/todo";
 import { App, Button, ButtonProps, Card, Checkbox, CheckboxProps, Popconfirm, PopconfirmProps, Space, Tooltip } from "antd";
 import { FC, useRef } from "react";
@@ -50,16 +51,7 @@ const TodoInner: FC<PropsType> = props =>
   }
   const onConfirm: PopconfirmProps['onConfirm'] = () =>
   {
-    // setTimeout(() =>
-    // {
-    //   console.log('*');
-    //   message.success('成功删除当前待办事项');
-    // }, 0);
     handleDelete();
-  };
-  const onCancel: PopconfirmProps['onCancel'] = () =>
-  {
-    // message.info('取消删除当前待办事项');
   };
 
   return (
@@ -99,7 +91,6 @@ const TodoInner: FC<PropsType> = props =>
               title="删除当前待办事项"
               description="是否确定删除当前待办事项？"
               onConfirm={onConfirm}
-              onCancel={onCancel}
               okText="确认"
               cancelText="取消">
                 <Button danger icon={<DeleteFilled />} />
