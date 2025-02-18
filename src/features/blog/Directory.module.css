@@ -3,8 +3,11 @@
   background-color: white;
   padding: 20px;
 }
-:global(.ant-tree-title > span > button:nth-child(2))  {
+:global(.ant-tree-title > span > :nth-child(2))  {
   margin-left: auto;
+}
+:global(.ant-tree-title > span > span:nth-child(1))  {
+  text-align: center;
 }
 :global(.ant-tree-title > span > button)  {
   font-size: 15px;
@@ -14,5 +17,9 @@
 }
 .title-render {
   display: inline-flex;
+  margin-left: auto;
   width: 97%;
+}
+.searched-title {
+  background-color: rgb(255, 166, 49);
 }

@@ -57,4 +57,18 @@ export function onDropHelper(gData: any, setGData: any)
     setGData(data);
   };
   return onDrop;
+};
+
+export function swapNode(u: TreeDataNode, from: TreeDataNode, to: TreeDataNode)
+{
+  if (u.key === from.key)
+  {
+    for (let key in to)
+    {
+      (u as any)[key] = (to as any)[key];
+    }
+    return;
+  }
+  if (!u.children) return;
+  u.children.forEach(v => swapNode(v, from, to)); // 递归遍历子节点
 }

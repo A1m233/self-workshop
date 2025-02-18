@@ -4,7 +4,6 @@ import { PageType, TodoType } from "@/types/todo";
 import { todoTypeChecker } from "@/util/todo";
 import { createSlice } from "@reduxjs/toolkit";
 
-
 export const todoSlice = createSlice(
 {
   name: 'todo',

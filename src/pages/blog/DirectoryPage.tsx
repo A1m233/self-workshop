@@ -8,7 +8,7 @@ const DirectoryPage: FC = () =>
   useTitle(TITLE_PREFIX + BLOG_PREFIX + '目录结构');
   return (
     <>
-      <Directory />
+      <Directory pageType="DirectoryPage" />
     </>
   );
 };
