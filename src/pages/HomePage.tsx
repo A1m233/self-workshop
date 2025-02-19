@@ -86,6 +86,7 @@ const HomePage: FC = () =>
             { date: '2025-02-17', count: 3 },
             { date: '2025-02-18', count: 2 },
             { date: '2025-02-19', count: 3 },
+            { date: '2025-02-20', count: 2 },
           ]}/>
         </div>
       </Card>

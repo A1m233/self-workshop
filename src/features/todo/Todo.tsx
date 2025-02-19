@@ -110,7 +110,7 @@ const Todo: FC<PropsType> = props =>
     <App>
       <TodoInner todo={todo}/>
     </App>
-  )
+  );
 };
 
 export default Todo;

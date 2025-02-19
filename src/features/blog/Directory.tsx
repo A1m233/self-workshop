@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import styles from './Directory.module.css';
 import { Alert, AlertProps, Button, Input, InputProps, Popconfirm, Tooltip, TreeDataNode } from "antd";
 import { DirectoryTreeProps } from "antd/es/tree";
@@ -6,7 +6,8 @@ import DirectoryTree from "antd/es/tree/DirectoryTree";
 import { onDropHelper } from "@/util/blog";
 import { DeleteOutlined, EditOutlined, FileAddOutlined, FolderAddOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { addFile, addFolder, closeInfo, deleteData, editTitle, selectDirectoryData, selectShowInfo, setDirectoryData } from "./blogSlice";
+import { addFile, addFolder, closeInfo, deleteData, editTitle, saveExpandedKeys, selectDirectoryData, selectSavedExpandedKeys, selectShowInfo, setDirectoryData } from "./blogSlice";
+import { Link } from "react-router-dom";
 
 interface PropsType
 {
@@ -23,7 +24,7 @@ const Directory: FC<PropsType> = props =>
   const dispatch = useDispatch();
 
   const [inputContent, setInputContent] = useState('');
-  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>(pageType === 'DirectoryPage' ? useSelector(selectSavedExpandedKeys) : []);
   const [editNameInputContent, setEditNameInputContent] = useState('');
   const [addFileInputContent, setAddFileInputContent] = useState('');
   const [addFolderInputContent, setAddFolderInputContent] = useState('');
@@ -64,6 +65,7 @@ const Directory: FC<PropsType> = props =>
         node,
         title: addFileInputContent,
       }));
+      setExpandedKeys([...expandedKeys, node.key]);
     };
   };
   const addFolderConfirmHelper = (node: TreeDataNode) =>
@@ -75,6 +77,7 @@ const Directory: FC<PropsType> = props =>
         node,
         title: addFolderInputContent,
       }));
+      setExpandedKeys([...expandedKeys, node.key]);
     };
   };
   const deleteDataConfirmHelper = (node: TreeDataNode) =>
@@ -87,11 +90,15 @@ const Directory: FC<PropsType> = props =>
   function titleRender(nodeData: TreeDataNode)
   {
     const title = nodeData.title as string;
-    const key = nodeData.key;
-    const isSearching = inputContent && title.includes(inputContent);
-    const titleHolder = <span className={isSearching ? styles['searched-title'] : undefined}>&nbsp;{title as any}&nbsp;</span>;
-    const isRoot = key === '0';
+    const key = nodeData.key;const isRoot = key === '0';
     const isLeaf = nodeData.isLeaf;
+    const isSearching = inputContent && title.includes(inputContent);
+    const titleHolder =
+    <span className={isSearching ? styles['searched-title'] : undefined}>
+      &nbsp;
+      {isLeaf ? <Link to={`/blog/detail/${key}`}>{title}</Link> : <>{title}</>}
+      &nbsp;
+    </span>;
     return (
       <>
         <span className={styles['title-render']}>
@@ -191,6 +198,15 @@ const Directory: FC<PropsType> = props =>
   showIcon/>;
   if (!showInfo)alertHolder = <></>;
 
+  useEffect(() =>
+  {
+    console.log(expandedKeys);
+    if (pageType === 'DirectoryPage')
+    {
+      dispatch(saveExpandedKeys(expandedKeys));
+    }
+  }, [expandedKeys]);
+
   return (
     <div className={styles['container']}>
       {/* 可选：只有选中时才会显示右侧的按钮 */}
@@ -199,7 +215,6 @@ const Directory: FC<PropsType> = props =>
       <DirectoryTree
       showLine
       draggable
-      autoExpandParent
       selectable={pageType === 'DetailPage'}
       onDrop={onDropHelper(directoryData, (newDirectoryData: TreeDataNode[]) => dispatch(setDirectoryData(newDirectoryData)))}
       onSelect={onSelect}

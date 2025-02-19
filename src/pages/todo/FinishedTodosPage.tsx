@@ -13,7 +13,7 @@ const FinishedTodosPage: FC = () =>
   const filteredTodoList = todoList.filter(element => todoTypeChecker('已完成', element));
   return (
     <>
-      <TodoList pageType="到期" todoList={filteredTodoList}/>
+      <TodoList pageType="已完成" todoList={filteredTodoList}/>
     </>
   );
 };

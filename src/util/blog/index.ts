@@ -1,9 +1,8 @@
 import { TreeProps, TreeDataNode } from "antd";
-export function onDropHelper(gData: any, setGData: any)
-{
+import lodash from 'lodash';
+export function onDropHelper(gData: any, setGData: any) {
   const onDrop: TreeProps['onDrop'] = (info) =>
   {
-    console.log(info);
     const dropKey = info.node.key;
     const dragKey = info.dragNode.key;
     const dropPos = info.node.pos.split('-');
@@ -23,7 +22,7 @@ export function onDropHelper(gData: any, setGData: any)
         }
       }
     };
-    const data = [...gData];
+    const data = lodash.cloneDeep(gData);
   
     // Find dragObject
     let dragObj: TreeDataNode;
@@ -31,10 +30,16 @@ export function onDropHelper(gData: any, setGData: any)
       arr.splice(index, 1);
       dragObj = item;
     });
-  
+    let isCancelled = false;
     if (!info.dropToGap) {
       // Drop on the content
       loop(data, dropKey, (item) => {
+        if (item.isLeaf)
+        {
+          alert('不可将文件或文件夹作为一个文件的子节点');
+          isCancelled = true;
+          return;
+        }
         item.children = item.children || [];
         // where to insert. New item was inserted to the start of the array in this example, but can be anywhere
         item.children.unshift(dragObj);
@@ -54,7 +59,9 @@ export function onDropHelper(gData: any, setGData: any)
         ar.splice(i! + 1, 0, dragObj!);
       }
     }
+    if (isCancelled)return;
     setGData(data);
+    console.log(data);
   };
   return onDrop;
 };
@@ -70,5 +77,5 @@ export function swapNode(u: TreeDataNode, from: TreeDataNode, to: TreeDataNode)
     return;
   }
   if (!u.children) return;
-  u.children.forEach(v => swapNode(v, from, to)); // 递归遍历子节点
-}
+  u.children.forEach(v => swapNode(v, from, to));
+};

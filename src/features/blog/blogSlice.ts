@@ -23,6 +23,8 @@ export const blogSlice = createSlice(
     ] as TreeDataNode[],
     currentId: 1,
     showInfo: true,
+    savedExpandedKeys: [] as React.Key[],
+    lastOpenedFile: '' as React.Key,
   },
   reducers:
   {
@@ -42,7 +44,7 @@ export const blogSlice = createSlice(
       const to =
       {
         ...node,
-        children: node.children ? [...node.children, { title, key: state.currentId, isLeaf: true, }] : [{ title, key: state.currentId, isLeaf: true, }]
+        children: node.children ? [...node.children, { title, key: state.currentId.toString(), isLeaf: true, }] : [{ title, key: state.currentId.toString(), isLeaf: true, }]
       };
       swapNode(state.directoryData[0], node, to);
       state.currentId++;
@@ -53,7 +55,7 @@ export const blogSlice = createSlice(
       const to =
       {
         ...node,
-        children: node.children ? [...node.children, { title, key: state.currentId }] : [{ title, key: state.currentId }]
+        children: node.children ? [...node.children, { title, key: state.currentId.toString() }] : [{ title, key: state.currentId.toString() }]
       };
       swapNode(state.directoryData[0], node, to);
       state.currentId++;
@@ -79,12 +81,24 @@ export const blogSlice = createSlice(
     closeInfo(state)
     {
       state.showInfo = false;
-    }
+    },
+    saveExpandedKeys(state, action)
+    {
+      const newExpandedKeys = action.payload;
+      state.savedExpandedKeys = newExpandedKeys;
+    },
+    setLastOpenedFile(state, action)
+    {
+      const key = action.payload;
+      state.lastOpenedFile = key;
+    },
   }
 });
 
 export default blogSlice.reducer;
 
-export const { setDirectoryData, editTitle, addFile, addFolder, deleteData, closeInfo } = blogSlice.actions;
+export const { setDirectoryData, editTitle, addFile, addFolder, deleteData, closeInfo,saveExpandedKeys, setLastOpenedFile } = blogSlice.actions;
 export const selectDirectoryData = (state: RootState) => state.blog.directoryData;
 export const selectShowInfo = (state: RootState) => state.blog.showInfo;
+export const selectSavedExpandedKeys = (state: RootState) => state.blog.savedExpandedKeys;
+export const selectLastOpenedFile = (state: RootState) => state.blog.lastOpenedFile;

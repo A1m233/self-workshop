@@ -3,17 +3,26 @@
   background-color: white;
   padding: 20px;
 }
-:global(.ant-tree-title > span > :nth-child(2))  {
+:global(.ant-tree-title > span > :nth-child(2)) {
   margin-left: auto;
 }
-:global(.ant-tree-title > span > span:nth-child(1))  {
+:global(.ant-tree-title > span > span:nth-child(1)) {
   text-align: center;
 }
-:global(.ant-tree-title > span > button)  {
+:global(.ant-tree-title > span > button) {
   font-size: 15px;
 }
-:global(.ant-tree-title > span > button:hover)  {
+:global(.ant-tree-title > span > button:hover) {
   background-color: rgba(0, 0, 0, 0.1) !important;
+}
+:global(span.ant-tree-node-content-wrapper.ant-tree-node-content-wrapper-normal) {
+  white-space: nowrap;
+}
+:global(span.ant-tree-node-content-wrapper.ant-tree-node-content-wrapper-open) {
+  white-space: nowrap;
+}
+:global(.ant-tree-node-content-wrapper.ant-tree-node-content-wrapper-close) {
+  white-space: nowrap;
 }
 .title-render {
   display: inline-flex;
