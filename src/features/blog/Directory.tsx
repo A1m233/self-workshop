@@ -4,7 +4,7 @@ import { Alert, AlertProps, Button, Input, InputProps, Popconfirm, Tooltip, Tree
 import { DirectoryTreeProps } from "antd/es/tree";
 import DirectoryTree from "antd/es/tree/DirectoryTree";
 import { onDropHelper } from "@/util/blog";
-import { DeleteOutlined, EditOutlined, FileAddOutlined, FolderAddOutlined } from "@ant-design/icons";
+import { CloseOutlined, DeleteOutlined, EditOutlined, FileAddOutlined, FolderAddOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { addFile, addFolder, closeInfo, deleteData, editTitle, saveExpandedKeys, selectDirectoryData, selectSavedExpandedKeys, selectShowInfo, setDirectoryData } from "./blogSlice";
 import { Link } from "react-router-dom";
@@ -192,7 +192,7 @@ const Directory: FC<PropsType> = props =>
   message="提示"
   description="可以通过拖拽文件或文件夹移动它们的位置"
   type="info"
-  closable
+  closable={{closeIcon: <Button type="text" style={{padding: '0px 6px 0px 6px'}}><CloseOutlined />不再提示我</Button>}}
   style={{marginBottom: '20px'}}
   onClose={onClose}
   showIcon/>;
