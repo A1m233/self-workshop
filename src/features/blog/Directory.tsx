@@ -7,7 +7,7 @@ import { onDropHelper } from "@/util/blog";
 import { CloseOutlined, DeleteOutlined, EditOutlined, FileAddOutlined, FolderAddOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { addFile, addFolder, closeInfo, deleteData, editTitle, saveExpandedKeys, selectDirectoryData, selectSavedExpandedKeys, selectShowInfo, setDirectoryData } from "./blogSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 interface PropsType
 {
@@ -20,18 +20,26 @@ const Directory: FC<PropsType> = props =>
 
   const directoryData = useSelector(selectDirectoryData);
   const showInfo = useSelector(selectShowInfo);
-
   const dispatch = useDispatch();
 
   const [inputContent, setInputContent] = useState('');
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>(pageType === 'DirectoryPage' ? useSelector(selectSavedExpandedKeys) : []);
+  const [autoExpandParent, setAutoExpandParent] = useState(true);
   const [editNameInputContent, setEditNameInputContent] = useState('');
   const [addFileInputContent, setAddFileInputContent] = useState('');
   const [addFolderInputContent, setAddFolderInputContent] = useState('');
+  
+  const { key: currentPageKey } = useParams();
+  const nav = useNavigate();
 
   const onSelect: DirectoryTreeProps['onSelect'] = (keys, info) =>
   {
     console.log('Trigger Select', keys, info);
+    setAutoExpandParent(true);
+    if (info.node.key !== currentPageKey && info.node.isLeaf)
+    {
+      nav(`/blog/detail/${info.node.key}`);
+    }
   };
   const onEditNameChange: InputProps['onChange'] = e =>
   {
@@ -84,7 +92,7 @@ const Directory: FC<PropsType> = props =>
   {
     return () =>
     {
-      dispatch(deleteData(node))
+      dispatch(deleteData(node));
     };
   };
   function titleRender(nodeData: TreeDataNode)
@@ -96,7 +104,7 @@ const Directory: FC<PropsType> = props =>
     const titleHolder =
     <span className={isSearching ? styles['searched-title'] : undefined}>
       &nbsp;
-      {isLeaf ? <Link to={`/blog/detail/${key}`}>{title}</Link> : <>{title}</>}
+      {(isLeaf && pageType === 'DirectoryPage') ? <Link to={`/blog/detail/${key}`}>{title}</Link> : <>{title}</>}
       &nbsp;
     </span>;
     return (
@@ -178,15 +186,18 @@ const Directory: FC<PropsType> = props =>
     }
     getSearchedKeys(directoryData[0]);
     setExpandedKeys(tmp);
+    setAutoExpandParent(true);
   };
   const onExpand = (newExpandedKeys: React.Key[]) =>
   {
     setExpandedKeys(newExpandedKeys);
+    setAutoExpandParent(false);
   };
   const onClose: AlertProps['onClose'] = () =>
   {
     dispatch(closeInfo());
   };
+
   let alertHolder =
   <Alert
   message="提示"
@@ -200,12 +211,20 @@ const Directory: FC<PropsType> = props =>
 
   useEffect(() =>
   {
-    console.log(expandedKeys);
     if (pageType === 'DirectoryPage')
     {
       dispatch(saveExpandedKeys(expandedKeys));
     }
   }, [expandedKeys]);
+
+  useEffect(() =>
+  {
+    if (pageType === 'DetailPage')
+    {
+      setExpandedKeys([currentPageKey as string]);
+    }
+    console.log(currentPageKey);
+  }, [currentPageKey]);
 
   return (
     <div className={styles['container']}>
@@ -216,12 +235,14 @@ const Directory: FC<PropsType> = props =>
       showLine
       draggable
       selectable={pageType === 'DetailPage'}
+      selectedKeys={pageType === 'DetailPage' ? [currentPageKey as string] : []}
       onDrop={onDropHelper(directoryData, (newDirectoryData: TreeDataNode[]) => dispatch(setDirectoryData(newDirectoryData)))}
       onSelect={onSelect}
       onExpand={onExpand}
       treeData={directoryData}
       titleRender={titleRender}
       expandedKeys={expandedKeys}
+      autoExpandParent={autoExpandParent}
       style={{marginTop: '20px'}}/>
     </div>
   );

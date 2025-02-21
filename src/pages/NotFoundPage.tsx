@@ -11,7 +11,7 @@ const NotFoundPage: FC = () => {
   <Button type="primary" onClick={() => nav('/')}>
     返回首页
   </Button>;
-  if (pathname === '/blog/detail')
+  if (pathname === '/blog/detail/')
   {
     subTitle = '由于你还没有进入过任何一个博客，无法确认要查看详情的博客，你可以：';
     extra =

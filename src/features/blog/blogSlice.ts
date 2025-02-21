@@ -8,6 +8,11 @@ interface PayloadType
   node: TreeDataNode,
   title: string,
 };
+interface BlogContent
+{
+  lastModifiedTime: string,
+  content: string,
+};
 
 export const blogSlice = createSlice(
 {
@@ -23,8 +28,9 @@ export const blogSlice = createSlice(
     ] as TreeDataNode[],
     currentId: 1,
     showInfo: true,
-    savedExpandedKeys: [] as React.Key[],
-    lastOpenedFile: '' as React.Key,
+    savedExpandedKeys: [] as string[],
+    lastOpenedFile: '' as string,
+    savedBlogContent: {} as Record<string, BlogContent>,
   },
   reducers:
   {
@@ -90,15 +96,21 @@ export const blogSlice = createSlice(
     setLastOpenedFile(state, action)
     {
       const key = action.payload;
-      state.lastOpenedFile = key;
+      state.lastOpenedFile = key.toString();
+    },
+    saveBlogContent(state, action)
+    {
+      const { key, blogContent } = action.payload;
+      state.savedBlogContent[key] = blogContent;
     },
   }
 });
 
 export default blogSlice.reducer;
 
-export const { setDirectoryData, editTitle, addFile, addFolder, deleteData, closeInfo,saveExpandedKeys, setLastOpenedFile } = blogSlice.actions;
+export const { setDirectoryData, editTitle, addFile, addFolder, deleteData, closeInfo,saveExpandedKeys, setLastOpenedFile, saveBlogContent } = blogSlice.actions;
 export const selectDirectoryData = (state: RootState) => state.blog.directoryData;
 export const selectShowInfo = (state: RootState) => state.blog.showInfo;
 export const selectSavedExpandedKeys = (state: RootState) => state.blog.savedExpandedKeys;
 export const selectLastOpenedFile = (state: RootState) => state.blog.lastOpenedFile;
+export const selectSavedBlogContent = (state: RootState) => state.blog.savedBlogContent;

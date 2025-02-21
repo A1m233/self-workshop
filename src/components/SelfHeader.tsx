@@ -16,7 +16,7 @@ const SelfHeader: FC = () =>
   const unfinishedCount = useSelector(selectUnfinishedCount);
   const expiredCount = useSelector(selectExpiredCount);
   const {pathname} = useLocation();
-  const lastOpenedFile = useSelector(selectLastOpenedFile)
+  const lastOpenedFile = useSelector(selectLastOpenedFile);
 
   const items: MenuItem[] =
   [
@@ -67,7 +67,7 @@ const SelfHeader: FC = () =>
           key: '/blog/directory',
         },
         {
-          label: <Link to={'/blog/detail' + lastOpenedFile}>详情</Link>,
+          label: <Link to={'/blog/detail/' + lastOpenedFile}>详情</Link>,
           key: '/blog/detail',
         },
       ],

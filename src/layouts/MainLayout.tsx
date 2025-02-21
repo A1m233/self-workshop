@@ -61,7 +61,7 @@ const MainLayout: FC = () =>
     <Layout className={styles['layout']}>
       {contextHolder}
       <SelfHeader />
-      <Content>
+      <Content className={styles['content']}>
         <Outlet />
       </Content>
     </Layout>

@@ -51,7 +51,7 @@ const router = createBrowserRouter(
         element: <DirectoryPage />,
       },
       {
-        path: '/blog/detail/:id',
+        path: '/blog/detail/:key',
         element: <DetailPage />,
       },
       {
