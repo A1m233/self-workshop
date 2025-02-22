@@ -1,5 +1,9 @@
+import { selectDirectoryData } from "@/features/blog/blogSlice";
 import { TreeProps, TreeDataNode } from "antd";
 import lodash from 'lodash';
+import React from "react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 export function onDropHelper(gData: any, setGData: any) {
   const onDrop: TreeProps['onDrop'] = (info) =>
   {
@@ -78,4 +82,28 @@ export function swapNode(u: TreeDataNode, from: TreeDataNode, to: TreeDataNode)
   }
   if (!u.children) return;
   u.children.forEach(v => swapNode(v, from, to));
+};
+
+export function searchPath(key: React.Key)
+{
+  let res;
+  function dfs(u: TreeDataNode, path: Array<object> = [])
+  {
+    const { title } = u;
+    if (path.length)path.push({title});
+    else path.push({title: <Link to="/blog/directory">{title as any}</Link>})
+    if (u.key === key)
+    {
+      res = path;
+      return;
+    }
+    if (!u.children) return;
+    u.children.forEach(v =>
+    {
+      let newPath = [...path];
+      dfs(v, newPath);
+    });
+  }
+  dfs(useSelector(selectDirectoryData)[0]);
+  return res;
 };

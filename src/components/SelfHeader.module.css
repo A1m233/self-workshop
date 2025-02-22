@@ -15,6 +15,6 @@
 .reminder {
   text-align: center;
 }
-:global(ul > li:nth-of-type(1)) {
+:global(ul > li.ant-menu-overflow-item.ant-menu-item:nth-of-type(1)) {
   background-color: #001529 !important;
 }

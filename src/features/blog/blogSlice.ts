@@ -31,6 +31,7 @@ export const blogSlice = createSlice(
     savedExpandedKeys: [] as string[],
     lastOpenedFile: '' as string,
     savedBlogContent: {} as Record<string, BlogContent>,
+    savedEditorMode: {} as Record<string, string>,
   },
   reducers:
   {
@@ -103,14 +104,31 @@ export const blogSlice = createSlice(
       const { key, blogContent } = action.payload;
       state.savedBlogContent[key] = blogContent;
     },
+    saveEditorMode(state, action)
+    {
+      const { key, newEditorMode } = action.payload;
+      state.savedEditorMode[key] = newEditorMode;
+    },
   }
 });
 
 export default blogSlice.reducer;
 
-export const { setDirectoryData, editTitle, addFile, addFolder, deleteData, closeInfo,saveExpandedKeys, setLastOpenedFile, saveBlogContent } = blogSlice.actions;
+export const {
+  setDirectoryData,
+  editTitle,
+  addFile,
+  addFolder,
+  deleteData,
+  closeInfo,
+  saveExpandedKeys,
+  setLastOpenedFile,
+  saveBlogContent,
+  saveEditorMode,
+} = blogSlice.actions;
 export const selectDirectoryData = (state: RootState) => state.blog.directoryData;
 export const selectShowInfo = (state: RootState) => state.blog.showInfo;
 export const selectSavedExpandedKeys = (state: RootState) => state.blog.savedExpandedKeys;
 export const selectLastOpenedFile = (state: RootState) => state.blog.lastOpenedFile;
 export const selectSavedBlogContent = (state: RootState) => state.blog.savedBlogContent;
+export const selectSaveEditorMode = (state: RootState) => state.blog.savedEditorMode;

@@ -6,8 +6,36 @@
   gap: 20px;
 }
 :global(#root > div > main > div > aside > span) {
-  top: 16.5px;
+  top: 42.5px;
 }
 :global(svg.md-editor-icon) {
   padding: 1px !important;
+}
+.md {
+  height: calc(100vh - 64px - 20px - 32px - 20px - 32px - 20px - 22px) !important;
+  width: 97% !important;
+  margin-bottom: 20px !important;
+  border: 1.5px solid rgba(5, 5, 5, 0.06) !important;
+}
+:global(.md-editor-preview-wrapper) {
+  padding: 0px 20px 20px 20px !important;
+}
+.md-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -22px;
+}
+.breadcrumb-wrapper {
+  display: flex;
+  flex-direction: row;
+  width: 97%;
+  margin-bottom: 2px;
+}
+.layout-content {
+  height: calc(100vh - 64px);
+}
+.layout {
+  height: 100% !important;
 }

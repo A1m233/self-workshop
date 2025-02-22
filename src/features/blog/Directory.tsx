@@ -1,3 +1,4 @@
+// Directory.tsx
 import { FC, useEffect, useState } from "react";
 import styles from './Directory.module.css';
 import { Alert, AlertProps, Button, Input, InputProps, Popconfirm, Tooltip, TreeDataNode } from "antd";
@@ -12,11 +13,12 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 interface PropsType
 {
   pageType: 'DirectoryPage' | 'DetailPage',
+  isVisible?: boolean,
 };
 
 const Directory: FC<PropsType> = props =>
 {
-  const { pageType } = props;
+  const { pageType, isVisible } = props;
 
   const directoryData = useSelector(selectDirectoryData);
   const showInfo = useSelector(selectShowInfo);
@@ -227,7 +229,7 @@ const Directory: FC<PropsType> = props =>
   }, [currentPageKey]);
 
   return (
-    <div className={styles['container']}>
+    <div className={styles['container']} style={{display: isVisible ? 'block' : 'none'}}>
       {/* 可选：只有选中时才会显示右侧的按钮 */}
       {alertHolder}
       <Input placeholder="输入以检索文件夹或文件" value={inputContent} onChange={onChange}/>

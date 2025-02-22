@@ -1,3 +1,4 @@
+// TodoList.tsx
 import type { TodoType } from "@/types/todo";
 import { Button, Input, InputProps} from "antd";
 import { FC, useEffect, useRef, useState } from "react";
@@ -48,7 +49,8 @@ const TodoList: FC<PropsType> = props =>
   useEffect(() =>
   {
     setSearchedTodoList(searchTodoList());
-  }, [todoList])
+    console.log(todoList);
+  }, [todoList]);
 
   return (
     <div>
