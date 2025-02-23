@@ -20,6 +20,17 @@ interface DailyContribution
   count: number,
 };
 
+const translate =
+{
+  0: '天',
+  1: '一',
+  2: '二',
+  3: '三',
+  4: '四',
+  5: '五',
+  6: '六',
+}
+
 const HomePage: FC = () =>
 {
   useTitle(TITLE_PREFIX + '首页');
@@ -123,7 +134,7 @@ const HomePage: FC = () =>
     const date = value.date;
     const count = value.count;
     return {
-      'data-tooltip-content': `${date} 进行了 ${count} 次修改`,
+      'data-tooltip-content': `${date} 星期${translate[dayjs(date).day()]} 进行了 ${count} 次修改`,
       'data-tooltip-id': 'calendar-heatmap-tooltip',
     };
   };
