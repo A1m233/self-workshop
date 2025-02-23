@@ -81,7 +81,7 @@ const SelfHeader: FC = () =>
       </div>
       <div className={styles['reminder-wrapper']}>
         <p className={styles['reminder']}>
-          <AlertFilled /> 待办事项：{expiredCount} 个<Link to="/todo/list/expired">已过期</Link>，{dueCount} 个<Link to="/todo/list/due">即将过期</Link>，除此之外还有 {unfinishedCount} 个<Link to="/todo/list/unfinished">未完成</Link>
+          <AlertFilled /> 待办事项：{expiredCount} 个<Link to="/todo/list/expired">已到期</Link>，{dueCount} 个<Link to="/todo/list/due">即将到期</Link>，除此之外还有 {unfinishedCount} 个<Link to="/todo/list/unfinished">未完成</Link>
         </p>
       </div>
     </Header>

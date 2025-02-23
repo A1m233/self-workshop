@@ -2,6 +2,7 @@ import { RootState } from "@/app/store";
 import { swapNode } from "@/util/blog";
 import { createSlice } from "@reduxjs/toolkit";
 import { TreeDataNode } from "antd";
+import dayjs from "dayjs";
 
 interface PayloadType
 {
@@ -32,6 +33,7 @@ export const blogSlice = createSlice(
     lastOpenedFile: '' as string,
     savedBlogContent: {} as Record<string, BlogContent>,
     savedEditorMode: {} as Record<string, string>,
+    dailyContribution: {} as Record<string, number>,
   },
   reducers:
   {
@@ -103,6 +105,9 @@ export const blogSlice = createSlice(
     {
       const { key, blogContent } = action.payload;
       state.savedBlogContent[key] = blogContent;
+      const currentDate = dayjs(Date.now()).format('YYYY-MM-DD');
+      if (!state.dailyContribution[currentDate])state.dailyContribution[currentDate] = 0;
+      state.dailyContribution[currentDate]++;
     },
     saveEditorMode(state, action)
     {
@@ -132,3 +137,4 @@ export const selectSavedExpandedKeys = (state: RootState) => state.blog.savedExp
 export const selectLastOpenedFile = (state: RootState) => state.blog.lastOpenedFile;
 export const selectSavedBlogContent = (state: RootState) => state.blog.savedBlogContent;
 export const selectSaveEditorMode = (state: RootState) => state.blog.savedEditorMode;
+export const selectDaliyContribution = (state: RootState) => state.blog.dailyContribution;

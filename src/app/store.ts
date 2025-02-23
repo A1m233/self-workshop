@@ -1,9 +1,10 @@
 // store.ts
 import todoReducer from "@/features/todo/todoSlice";
 import blogReducer from "@/features/blog/blogSlice";
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { applyMiddleware, combineReducers, configureStore, createStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import { createStateSyncMiddleware, initStateWithPrevTab } from "redux-state-sync";
 
 const rootReducer = combineReducers(
 { 
@@ -22,15 +23,25 @@ const persistConfig =
 // 创建持久化后的reducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
+const asyncConfig =
+{
+  // TOGGLE_TODO will not be triggered in other tabs
+  blacklist: [],
+  broadcastChannelOption: { type: 'localstorage' },
+};
+const asyncMiddleware = createStateSyncMiddleware(asyncConfig);
+
 export const store = configureStore(
 {
   reducer: persistedReducer,
   // 配置中间件：如果使用redux-persist，则需要设置为false，否则控制台报错（非序列化数据）
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware
-  ({
+  middleware: getDefaultMiddleware => getDefaultMiddleware(
+  {
     serializableCheck: false,
-  }),
+  }).concat(asyncMiddleware),
 });
+
+// initStateWithPrevTab(store);
 
 // 导出store和持久化后的store
 export const persistor = persistStore(store);

@@ -1,6 +1,6 @@
 import { TITLE_PREFIX } from "@/constant";
 import { useTitle } from "ahooks";
-import { FC, useState } from "react";
+import { FC } from "react";
 import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
 import styles from './HomePage.module.css';
@@ -8,6 +8,17 @@ import { Card } from "antd";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectDueCount, selectExpiredCount, selectUnfinishedCount } from "@/features/todo/todoSlice";
+import { selectDaliyContribution } from "@/features/blog/blogSlice";
+import { Tooltip as ReactToolTip } from 'react-tooltip';
+import dayjs from "dayjs";
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
+dayjs.extend(isSameOrBefore)
+
+interface DailyContribution
+{
+  date: string,
+  count: number,
+};
 
 const HomePage: FC = () =>
 {
@@ -16,9 +27,50 @@ const HomePage: FC = () =>
   const dueCount = useSelector(selectDueCount);
   const unfinishedCount = useSelector(selectUnfinishedCount);
   const expiredCount = useSelector(selectExpiredCount);
-  const [expiredReminder, _] = useState(expiredCount ?
+  const dailyContributionFromRedux = useSelector(selectDaliyContribution);
+
+  const dailyContribution: DailyContribution[] = Object.entries(dailyContributionFromRedux).reduce((accmulator, item) =>
+  {
+    const [date, count] = item;
+    accmulator.push(
+    {
+      date,
+      count,
+    });
+    return accmulator
+  }, [] as Array<any>);
+  const fullYearDailyContribution = [];
+  for (let day = dayjs().subtract(1, 'year').add(1, 'day'); day.isSameOrBefore(dayjs(), 'day'); day = day.add(1, 'day'))
+  {
+    const date = day.format('YYYY-MM-DD');
+    if (date in dailyContributionFromRedux)
+    {
+      fullYearDailyContribution.push(
+      {
+        date,
+        count: dailyContributionFromRedux[date],
+      });
+      continue;
+    }
+    fullYearDailyContribution.push(
+    {
+      date,
+      count: 0,
+    });
+  }
+
+  const maxCount = dailyContribution.reduce((accmulator: number, item) =>
+  {
+    return Math.max(accmulator, item.count);
+  }, 0);
+  const minCount = dailyContribution.reduce((accmulator, item) =>
+  {
+    return Math.min(accmulator, item.count);
+  }, Infinity);
+  const expiredReminder =
+  expiredCount ?
   <p>💀 警告，你有 {expiredCount} 个<Link to="/todo/list/expired">到期的待办事项</Link></p>
-  : <p>🎉 恭喜你，现在没有任何到期待办事项</p>);
+  : <p>🎉 恭喜你，现在没有任何到期待办事项</p>;
   let reminder;
   if (dueCount && unfinishedCount)
   {
@@ -55,6 +107,27 @@ const HomePage: FC = () =>
     );
   }
 
+  function classForValue(value: any)
+  {
+    if (!value || !value.count)return 'color-empty';
+    const len = maxCount - minCount + 1;
+    const pos = value.count - minCount;
+    if (len === 1)return 'color-scale-1';
+    if (pos >= 0.75 * len)return 'color-scale-1';
+    else if (pos >= 0.50 * len)return 'color-scale-2';
+    else if (pos >= 0.25 * len)return 'color-scale-3';
+    return 'color-scale-4';
+  }
+  const handleToolTip = (value: any) =>
+  {
+    const date = value.date;
+    const count = value.count;
+    return {
+      'data-tooltip-content': `${date} 进行了 ${count} 次修改`,
+      'data-tooltip-id': 'calendar-heatmap-tooltip',
+    };
+  };
+
   return (
     <div className={styles['container']}>
       <Card title="待办事项未完成提醒">
@@ -74,22 +147,10 @@ const HomePage: FC = () =>
           <CalendarHeatmap
           startDate={new Date().setFullYear(new Date().getFullYear() - 1)}
           endDate={new Date()}
-          values={
-          [
-            { date: '2025-02-10', count: 1 },
-            { date: '2025-02-11', count: 2 },
-            { date: '2025-02-12', count: 4 },
-            { date: '2025-02-13', count: 3 },
-            { date: '2025-02-14', count: 1 },
-            { date: '2025-02-15', count: 3 },
-            { date: '2025-02-16', count: 3 },
-            { date: '2025-02-17', count: 3 },
-            { date: '2025-02-18', count: 2 },
-            { date: '2025-02-19', count: 3 },
-            { date: '2025-02-20', count: 2 },
-            { date: '2025-02-21', count: 1 },
-            { date: '2025-02-22', count: 2 },
-          ]}/>
+          tooltipDataAttrs={handleToolTip as any}
+          values={fullYearDailyContribution}
+          classForValue={classForValue}/>
+          <ReactToolTip id='calendar-heatmap-tooltip' />
         </div>
       </Card>
     </div>

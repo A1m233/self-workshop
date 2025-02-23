@@ -109,16 +109,15 @@ const DetailPage: FC = () =>
   useEffect(() =>
   {
     dispatch(setLastOpenedFile(currentPageKey?.toString()));
-    showModal();
     setCollapsed(true);
     setIsModalOpen(false);
     setUploadFileHandle(undefined);
     if (content !== (savedBlogContent[currentPageKey!]?.content ?? ''))
     {
-      console.log('modified');
       setContent(savedBlogContent[currentPageKey!]?.content ?? '');
     }
     setEditorMode(savedEditorMode[currentPageKey!] ?? 'preview');
+    showModal();
   }, [currentPageKey]);
   useEffect(() =>
   {

@@ -6,15 +6,33 @@
   gap: 20px;
 }
 .calendar-wrapper {
-  height: 30vh;
+  height: calc((100vh - 64px - 60px - 112px - 96px) / 2);
   width: 85vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 .reminder-container {
+  height: calc((100vh - 64px - 60px - 112px - 96px) / 2);
   width: 85vw;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+}
+:global(.react-calendar-heatmap .color-scale-1)
+{
+  fill: #1e6823;
+}
+:global(.react-calendar-heatmap .color-scale-2)
+{
+  fill: #44a340;
+}
+:global(.react-calendar-heatmap .color-scale-3)
+{
+  fill: #8cc665;
+}
+:global(.react-calendar-heatmap .color-scale-4)
+{
+  fill: #d6e685;
 }

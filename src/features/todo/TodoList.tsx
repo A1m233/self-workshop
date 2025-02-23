@@ -49,7 +49,6 @@ const TodoList: FC<PropsType> = props =>
   useEffect(() =>
   {
     setSearchedTodoList(searchTodoList());
-    console.log(todoList);
   }, [todoList]);
 
   return (

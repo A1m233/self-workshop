@@ -65,7 +65,6 @@ export function onDropHelper(gData: any, setGData: any) {
     }
     if (isCancelled)return;
     setGData(data);
-    console.log(data);
   };
   return onDrop;
 };
@@ -107,3 +106,23 @@ export function searchPath(key: React.Key)
   dfs(useSelector(selectDirectoryData)[0]);
   return res;
 };
+
+export function getUnderLeafKeys(key: React.Key)
+{
+  let res = new Set<React.Key>();
+  function dfs(u: TreeDataNode, hasFound = false)
+  {
+    if (u.key === key)
+    {
+      hasFound = true;
+    }
+    if (!u.children) return;
+    u.children.forEach(v =>
+    {
+      if (v.isLeaf)res.add(v.key);
+      else dfs(v, hasFound);
+    });
+  }
+  dfs(useSelector(selectDirectoryData)[0]);
+  return res;
+}
