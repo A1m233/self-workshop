@@ -1,7 +1,7 @@
 // TodoList.tsx
 import type { TodoType } from "@/types/todo";
-import { Button, Input, InputProps} from "antd";
-import { FC, useEffect, useRef, useState } from "react";
+import { Button, Input, InputProps, Pagination, PaginationProps} from "antd";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Todo from "./Todo";
 import styles from './TodoList.module.css';
 import TodoModal, { TodoModalHandles } from "./TodoModal";
@@ -19,37 +19,36 @@ const TodoList: FC<PropsType> = props =>
   const todoModalRef = useRef<TodoModalHandles>(null);
 
   const [inputContent, setInputContent] = useState('');
-  const [searchedTodoList, setSearchedTodoList] = useState(searchTodoList());
-
-  const showModal = () =>
-  {
-    if (todoModalRef.current)
-    {
-      todoModalRef.current.showModal();
-    }
-  };
-  const onChange: InputProps['onChange'] = e =>
-  {
-    setInputContent(e.target.value);
-  }
-  function searchTodoList()
-  {
-    return inputContent === '' ? todoList : todoList.filter(todo => todo.content.includes(inputContent));
-  }
+  const [debouncedInputContent, setDebouncedInputContent] = useState('');
+  const searchedTodoList = useMemo(() => {
+    if (debouncedInputContent === '') return todoList;
+    return todoList.filter(todo => todo.content.includes(debouncedInputContent));
+  }, [debouncedInputContent, todoList]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() =>
   {
     const timer = setTimeout(() =>
     {
-      setSearchedTodoList(searchTodoList());
+      setDebouncedInputContent(inputContent);
     }, 500);
-    // 清除上一次的定时器，防止用户快速输入时产生多次不必要的更新
     return () => clearTimeout(timer);
   }, [inputContent]);
-  useEffect(() =>
+  const onChange: InputProps['onChange'] = useCallback((e: any) =>
   {
-    setSearchedTodoList(searchTodoList());
-  }, [todoList]);
+    setInputContent(e.target.value);
+  }, []);
+  const showModal = useCallback(() =>
+  {
+    if (todoModalRef.current)
+    {
+      todoModalRef.current.showModal();
+    }
+  }, []);
+  const onPageChange: PaginationProps['onChange'] = page =>
+  {
+    setCurrentPage(page);
+  };
 
   return (
     <div>
@@ -67,11 +66,16 @@ const TodoList: FC<PropsType> = props =>
         <TodoModal ref={todoModalRef} />
         <div className={styles['todolist-wrapper']}>
           {
-            searchedTodoList.map(todo =>
+            searchedTodoList.slice((currentPage - 1) * 10, currentPage * 10).map(todo =>
             {
               return <Todo todo={todo} key={todo.id}/>
             })
           }
+          <Pagination
+          align='center'
+          total={searchedTodoList.length}
+          showTotal={total => `共 ${total} 个待办事项`}
+          onChange={onPageChange} />
         </div>
       </div>
     </div>

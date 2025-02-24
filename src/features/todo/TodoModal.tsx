@@ -1,6 +1,7 @@
+// TodoModal.tsx
 import { DatePicker, Form, Input, message, Modal } from "antd";
 import { useForm } from "antd/es/form/Form";
-import { forwardRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addTodo, editTodo } from "./todoSlice";
 import dayjs from "dayjs";
@@ -59,10 +60,10 @@ const TodoModal = forwardRef<TodoModalHandles, PropsType>((props, ref) =>
       }));
     }
   }
-  function showModal()
+  const showModal = useCallback(() =>
   {
     setIsModalOpen(true);
-  };
+  }, []);
   function handleOk()
   {
     form.validateFields().then(() =>

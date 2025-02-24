@@ -32,3 +32,11 @@
 .searched-title {
   background-color: rgb(255, 166, 49);
 }
+.close-button {
+  padding: 0px 6px 0px 6px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  align-items: center;
+}

@@ -269,7 +269,7 @@ const Directory: FC<PropsType> = props =>
   message="提示"
   description="可以通过拖拽文件或文件夹移动它们的位置"
   type="info"
-  closable={{closeIcon: <Button type="text" style={{padding: '0px 6px 0px 6px'}}><CloseOutlined />不再提示我</Button>}}
+  closable={{closeIcon: <span className={styles['close-button']}><CloseOutlined /><span style={{textAlign: 'center'}}>不再提示我</span></span>}}
   style={{marginBottom: '20px'}}
   onClose={onClose}
   showIcon/>;
