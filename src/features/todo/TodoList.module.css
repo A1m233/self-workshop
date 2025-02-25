@@ -4,7 +4,7 @@
   margin: 0px 16px 16px 16px;
   background-color: #f5f5f5;
 }
-:global(#root > div > main.ant-layout-content > div) {
+:global(#root > div > main.ant-layout-content > div > div[class*="body"]) {
   background-color: #f5f5f5;
 }
 :global(.ant-pagination) {

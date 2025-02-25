@@ -45,10 +45,10 @@ const TodoList: FC<PropsType> = props =>
       todoModalRef.current.showModal();
     }
   }, []);
-  const onPageChange: PaginationProps['onChange'] = page =>
+  const onPageChange: PaginationProps['onChange'] = useCallback((page: number) =>
   {
     setCurrentPage(page);
-  };
+  }, []);
 
   return (
     <div>
@@ -75,7 +75,8 @@ const TodoList: FC<PropsType> = props =>
           align='center'
           total={searchedTodoList.length}
           showTotal={total => `共 ${total} 个待办事项`}
-          onChange={onPageChange} />
+          onChange={onPageChange}
+          style={{marginBottom: '20px'}}/>
         </div>
       </div>
     </div>

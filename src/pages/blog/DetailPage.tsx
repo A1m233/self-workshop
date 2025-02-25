@@ -117,7 +117,7 @@ const DetailPage: FC = () =>
       setContent(savedBlogContent[currentPageKey!]?.content ?? '');
     }
     setEditorMode(savedEditorMode[currentPageKey!] ?? 'preview');
-    showModal();
+    // showModal();
   }, [currentPageKey]);
   useEffect(() =>
   {
@@ -125,7 +125,7 @@ const DetailPage: FC = () =>
   }, [editorMode]);
   useEffect(() =>
   {
-    showModal();
+    // showModal();
   }, []);
   useEffect(() =>
   {
@@ -149,14 +149,14 @@ const DetailPage: FC = () =>
   return (
     <Layout className={styles['layout']}>
       {contextHolder}
-      <Modal
+      {/* <Modal
       closable={false}
       title={'是否将本地Markdown文件同步到系统中' + (savedBlogContent[currentPageKey!] ? `（系统中文件上次修改时间为 "${savedBlogContent[currentPageKey!].lastModifiedTime}" ）` : '') + '？'}
       open={isModalOpen}
       onOk={handleOk}
       onCancel={handleCancel}
       okText="是"
-      cancelText="否" />
+      cancelText="否" /> */}
       <Sider
       collapsible
       collapsed={collapsed}
