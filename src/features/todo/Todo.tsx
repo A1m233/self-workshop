@@ -1,7 +1,7 @@
 // Todo.tsx
 import type { TodoType } from "@/types/todo";
 import { App, Button, ButtonProps, Card, Checkbox, CheckboxProps, Popconfirm, PopconfirmProps, Space, Tooltip } from "antd";
-import { FC, useRef } from "react";
+import { FC, memo, useRef, useState } from "react";
 import styles from './Todo.module.css';
 import { deleteTodo, switchTodoState } from "./todoSlice";
 import { useDispatch } from "react-redux";
@@ -14,7 +14,7 @@ interface PropsType
   todo: TodoType,
 };
 
-const TodoInner: FC<PropsType> = props =>
+const TodoInner: FC<PropsType> = memo(props =>
 {
   const { message } = App.useApp();
 
@@ -24,6 +24,7 @@ const TodoInner: FC<PropsType> = props =>
   const dispatch = useDispatch();
 
   const todoModalRef = useRef<TodoModalHandles>(null);
+  const [isMouseOver, setIsMouseOver] = useState(false);
 
   const showModal = () =>
   {
@@ -59,6 +60,8 @@ const TodoInner: FC<PropsType> = props =>
       <Card
       classNames={{body: styles['todo-card-body']}}
       className={styles['todo-card']}
+      onMouseOver={() => setIsMouseOver(true)}
+      onMouseLeave={() => setIsMouseOver(false)}
       hoverable>
         <TodoModal
         ref={todoModalRef}
@@ -80,30 +83,43 @@ const TodoInner: FC<PropsType> = props =>
             </p>
           </span>
           <Space.Compact className={styles['button-group']}>
-            <Tooltip title="复制待办事项内容">
-              <Button icon={<CopyFilled />} onClick={handleCopy}/>
-            </Tooltip>
-            <Tooltip title="编辑待办事项">
-              <Button icon={<EditFilled />} onClick={showModal}/>
-            </Tooltip>
-            <Tooltip title="删除待办事项">
-              <Popconfirm
-              title="删除当前待办事项"
-              description="是否确定删除当前待办事项？"
-              onConfirm={onConfirm}
-              okText="确认"
-              cancelText="取消">
-                <Button danger icon={<DeleteFilled />} />
-              </Popconfirm>
-            </Tooltip>
+            {
+              isMouseOver ? (
+                <>
+                  <Tooltip title="复制待办事项内容">
+                    <Button icon={<CopyFilled />} onClick={handleCopy}/>
+                  </Tooltip>
+                  <Tooltip title="编辑待办事项">
+                    <Button icon={<EditFilled />} onClick={showModal}/>
+                  </Tooltip>
+                  <Tooltip title="删除待办事项">
+                    <Popconfirm
+                    title="删除当前待办事项"
+                    description="是否确定删除当前待办事项？"
+                    onConfirm={onConfirm}
+                    okText="确认"
+                    cancelText="取消">
+                      <Button danger icon={<DeleteFilled />} />
+                    </Popconfirm>
+                  </Tooltip>
+                </>
+              ) : (
+                <>
+                  <Button icon={<CopyFilled />} onClick={handleCopy}/>
+                  <Button icon={<EditFilled />} onClick={showModal}/>
+                  <Button danger icon={<DeleteFilled />} />
+                </>
+              )
+            }
+            
           </Space.Compact>
         </div>
       </Card>
     </>
   );
-};
+});
 
-const Todo: FC<PropsType> = props =>
+const Todo: FC<PropsType> = memo(props =>
 {
   const { todo } = props;
   return (
@@ -111,6 +127,6 @@ const Todo: FC<PropsType> = props =>
       <TodoInner todo={todo}/>
     </App>
   );
-};
+});
 
 export default Todo;

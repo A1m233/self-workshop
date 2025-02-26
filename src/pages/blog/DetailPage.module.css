@@ -6,13 +6,13 @@
   gap: 20px;
 }
 :global(#root > div > main > div > aside > span) {
-  top: 42.5px;
+  top: 16px;
 }
 :global(svg.md-editor-icon) {
   padding: 1px !important;
 }
 .md {
-  height: calc(100vh - 64px - 20px - 32px - 20px - 32px - 20px - 22px) !important;
+  height: calc(100vh - 64px - 20px - 32px - 20px - 22px) !important;
   width: 97% !important;
   margin-bottom: 20px !important;
   border: 1.5px solid rgba(5, 5, 5, 0.06) !important;
@@ -25,7 +25,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: -22px;
+  margin-top: 0px;
 }
 .breadcrumb-wrapper {
   display: flex;
@@ -38,4 +38,9 @@
 }
 .layout {
   height: 100% !important;
+}
+.button-group {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }

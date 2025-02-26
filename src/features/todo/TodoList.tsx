@@ -1,7 +1,7 @@
 // TodoList.tsx
 import type { TodoType } from "@/types/todo";
 import { Button, Input, InputProps, Pagination, PaginationProps} from "antd";
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Todo from "./Todo";
 import styles from './TodoList.module.css';
 import TodoModal, { TodoModalHandles } from "./TodoModal";
@@ -12,7 +12,7 @@ interface PropsType
   todoList: TodoType[],
 };
 
-const TodoList: FC<PropsType> = props =>
+const TodoList: FC<PropsType> = memo(props =>
 {
   const { pageType, todoList } = props;
 
@@ -81,6 +81,6 @@ const TodoList: FC<PropsType> = props =>
       </div>
     </div>
   );
-};
+});
 
 export default TodoList;

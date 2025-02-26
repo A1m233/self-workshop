@@ -2,6 +2,10 @@
   min-height: calc(100vh - 64px);
   background-color: white;
   padding: 20px;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
 }
 :global(.ant-tree-title > span > :nth-child(2)) {
   margin-left: auto;

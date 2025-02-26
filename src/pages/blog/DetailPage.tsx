@@ -166,14 +166,14 @@ const DetailPage: FC = () =>
         <Directory pageType="DetailPage" isVisible={!collapsed}/>
       </Sider>
       <Content className={styles['content']} style={{display: collapsed ? '' : 'none'}}>
-        <Space.Compact>
+        <div className={styles['button-group']}>
           <Button onClick={onClickUpload} type="primary"><CloudUploadOutlined style={{fontSize: '18px'}}/>将本地Markdown文件同步到系统中</Button>
+          <Space.Compact>
+            <Button onClick={() => setEditorMode('preview')} type={editorMode === 'preview' ? 'primary' : 'default'} shape="round">预览模式</Button>
+            <Button onClick={() => setEditorMode('edit')} type={editorMode === 'edit' ? 'primary' : 'default'} shape="round">编辑模式</Button>
+          </Space.Compact>
           <Button onClick={onClickDownload} type="primary"><CloudDownloadOutlined style={{fontSize: '18px'}} />将系统中Markdown文件同步到本地</Button>
-        </Space.Compact>
-        <Space.Compact>
-          <Button onClick={() => setEditorMode('preview')} type={editorMode === 'preview' ? 'primary' : 'default'} shape="round">预览模式</Button>
-          <Button onClick={() => setEditorMode('edit')} type={editorMode === 'edit' ? 'primary' : 'default'} shape="round">编辑模式</Button>
-        </Space.Compact>
+        </div>
         <div className={styles['md-wrapper']}>
           <div className={styles['breadcrumb-wrapper']}>
             <Breadcrumb

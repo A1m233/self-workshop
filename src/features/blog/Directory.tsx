@@ -31,24 +31,25 @@ const Directory: FC<PropsType> = ({ pageType, isVisible }) =>
   const [editNameInputContent, setEditNameInputContent] = useState('');
   const [addFileInputContent, setAddFileInputContent] = useState('');
   const [addFolderInputContent, setAddFolderInputContent] = useState('');
+  const [mouseOverKey, setMouseOverKey] = useState('');
 
   const initialState = useMemo(() =>
   {
-    let editNameOpenTmp = {} as any;
-    let addFileOpenTmp = {} as any;
-    let addFolderOpenTmp = {} as any;
-    let setEditNameOpenTmp = {} as any;
-    let setAddFileOpenTmp = {} as any;
-    let setAddFolderOpenTmp = {} as any;
+    const editNameOpenTmp: Record<string, boolean> = {};
+    const addFileOpenTmp: Record<string, boolean> = {};
+    const addFolderOpenTmp: Record<string, boolean> = {};
+    const setEditNameOpenTmp: Record<string, Function> = {};
+    const setAddFileOpenTmp: Record<string, Function> = {};
+    const setAddFolderOpenTmp: Record<string, Function> = {};
     (function addState(node: TreeDataNode)
     {
       const { key } = node;
-      editNameOpenTmp = {...editNameOpenTmp, [key.toString()]: false};
-      addFileOpenTmp = {...addFileOpenTmp, [key.toString()]: false};
-      addFolderOpenTmp = {...addFolderOpenTmp, [key.toString()]: false};
-      setEditNameOpenTmp = {...setEditNameOpenTmp, [key.toString()]: (newState: any) => changeEditNameOpen({...editNameOpen, [key.toString()]: newState})};
-      setAddFileOpenTmp = {...setAddFileOpenTmp, [key.toString()]: (newState: any) => changeAddFileOpen({...editNameOpen, [key.toString()]: newState})};
-      setAddFolderOpenTmp = {...setAddFolderOpenTmp, [key.toString()]: (newState: any) => changeAddFolderOpen({...editNameOpen, [key.toString()]: newState})};
+      editNameOpenTmp[key.toString()] = false;
+      addFileOpenTmp[key.toString()] = false;
+      addFolderOpenTmp[key.toString()] = false;
+      setEditNameOpenTmp[key.toString()] = (newState: boolean) => changeEditNameOpen(prev => ({ ...prev, [key.toString()]: newState }));
+      setAddFileOpenTmp[key.toString()] = (newState: boolean) => changeAddFileOpen(prev => ({ ...prev, [key.toString()]: newState }));
+      setAddFolderOpenTmp[key.toString()] = (newState: boolean) => changeAddFolderOpen(prev => ({ ...prev, [key.toString()]: newState }));
       if (!node.children)return;
       node.children.forEach(v => addState(v));
     })(directoryData[0]);
@@ -162,7 +163,7 @@ const Directory: FC<PropsType> = ({ pageType, isVisible }) =>
       setAddFolderOpen[node.key.toString()](false);
     };
   };
-  function titleRender(nodeData: TreeDataNode)
+  const titleRender = (nodeData: TreeDataNode) =>
   {
     // 思考：是否应该缓存起来？
     const title = nodeData.title as string;
@@ -170,75 +171,85 @@ const Directory: FC<PropsType> = ({ pageType, isVisible }) =>
     const isRoot = key === '0';
     const isLeaf = nodeData.isLeaf;
     const isSearching = inputContent && title.includes(inputContent);
-    const titleHolder =
-    <span className={isSearching ? styles['searched-title'] : undefined}>
-      &nbsp;
-      {(isLeaf && pageType === 'DirectoryPage') ? <Link to={`/blog/detail/${key}`}>{title}</Link> : <>{title}</>}
-      &nbsp;
-    </span>;
-    return (
-      <>
+    const titleHolder = (
+      <span className={isSearching ? styles['searched-title'] : undefined}>
+        &nbsp;
+        {(isLeaf && pageType === 'DirectoryPage') ? <Link to={`/blog/detail/${key}`}>{title}</Link> : <>{title}</>}
+        &nbsp;
+      </span>
+    );
+    if (mouseOverKey !== key)
+    {
+      return (
         <span className={styles['title-render']}>
           {titleHolder}
           <span>
-            <Popconfirm
-            icon={<></>}
-            title="输入新名称"
-            description={<Input placeholder="输入新名称" onChange={onEditNameChange} onPressEnter={pressEditNameEnterHelper(nodeData)} allowClear/>}
-            onConfirm={editNameConfirmHelper(nodeData)}
-            onPopupClick={e => e?.stopPropagation()}
-            open={editNameOpen[key.toString()]}
-            onOpenChange={(newOpen) => setEditNameOpen[key.toString()](newOpen)}
-            okText="重命名"
-            cancelText="取消">
-              <Tooltip placement="bottom" title="重命名">
-                <Button size={'small'} type="text" onClick={e => e?.stopPropagation()}><EditOutlined /></Button>
-              </Tooltip>
-            </Popconfirm>
-            <Popconfirm
-            icon={<></>}
-            title="输入文件名称"
-            description={<Input placeholder="输入文件名称" onChange={onAddFileChange} onPressEnter={pressAddFileEnterHelper(nodeData)} allowClear/>}
-            onConfirm={addFileConfirmHelper(nodeData)}
-            onPopupClick={e => e?.stopPropagation()}
-            open={addFileOpen[key.toString()]}
-            onOpenChange={(newOpen) => setAddFileOpen[key.toString()](newOpen)}
-            okText="新建文件"
-            cancelText="取消">
-              <Tooltip placement="bottom" title={isLeaf ? '无法在文件下添加文件' : '添加文件'}>
-                <Button size={'small'} type="text" disabled={isLeaf} onClick={e => e?.stopPropagation()}><FileAddOutlined /></Button>
-              </Tooltip>
-            </Popconfirm>
-            <Popconfirm
-            icon={<></>}
-            title="输入文件夹名称"
-            description={<Input placeholder="输入文件夹名称" onChange={onAddFolderChange} onPressEnter={pressAddFolderEnterHelper(nodeData)} allowClear/>}
-            onConfirm={addFolderConfirmHelper(nodeData)}
-            onPopupClick={e => e?.stopPropagation()}
-            open={addFolderOpen[key.toString()]}
-            onOpenChange={(newOpen) => setAddFolderOpen[key.toString()](newOpen)}
-            okText="新建文件夹"
-            cancelText="取消">
-              <Tooltip placement="bottom" title={isLeaf ? '无法在文件下添加文件夹' : '添加文件夹'}>
-                <Button size={'small'} type="text" disabled={isLeaf} onClick={e => e?.stopPropagation()}><FolderAddOutlined /></Button>
-              </Tooltip>
-            </Popconfirm>
-            <Popconfirm
-            title="删除当前及以下的所有文件和文件夹"
-            description="是否确定删除当前及以下的所有文件和文件夹？"
-            onConfirm={deleteDataConfirmHelper(nodeData)}
-            onPopupClick={e => e?.stopPropagation()}
-            okText="确定"
-            cancelText="取消">
-              <Tooltip placement="bottom" title={isRoot ? '不可删除根目录' : '删除当前及以下的所有文件和文件夹'}>
-                <Button danger size={'small'} type="text" disabled={isRoot} onClick={e => e?.stopPropagation()}><DeleteOutlined /></Button>
-              </Tooltip>
-            </Popconfirm>
+          <Button size={'small'} type="text" onClick={e => e?.stopPropagation()}><EditOutlined /></Button>
           </span>
         </span>
-      </>
+      );
+    }
+    return (
+      <span className={styles['title-render']}>
+        {titleHolder}
+        <span>
+          <Popconfirm
+          icon={<></>}
+          title="输入新名称"
+          description={<Input placeholder="输入新名称" onChange={onEditNameChange} onPressEnter={pressEditNameEnterHelper(nodeData)} allowClear/>}
+          onConfirm={editNameConfirmHelper(nodeData)}
+          onPopupClick={e => e?.stopPropagation()}
+          open={editNameOpen[key.toString()]}
+          onOpenChange={(newOpen) => setEditNameOpen[key.toString()](newOpen)}
+          okText="重命名"
+          cancelText="取消">
+            <Tooltip placement="bottom" title="重命名">
+              <Button size={'small'} type="text" onClick={e => e?.stopPropagation()}><EditOutlined /></Button>
+            </Tooltip>
+          </Popconfirm>
+          <Popconfirm
+          icon={<></>}
+          title="输入文件名称"
+          description={<Input placeholder="输入文件名称" onChange={onAddFileChange} onPressEnter={pressAddFileEnterHelper(nodeData)} allowClear/>}
+          onConfirm={addFileConfirmHelper(nodeData)}
+          onPopupClick={e => e?.stopPropagation()}
+          open={addFileOpen[key.toString()]}
+          onOpenChange={(newOpen) => setAddFileOpen[key.toString()](newOpen)}
+          okText="新建文件"
+          cancelText="取消">
+            <Tooltip placement="bottom" title={isLeaf ? '无法在文件下添加文件' : '添加文件'}>
+              <Button size={'small'} type="text" disabled={isLeaf} onClick={e => e?.stopPropagation()}><FileAddOutlined /></Button>
+            </Tooltip>
+          </Popconfirm>
+          <Popconfirm
+          icon={<></>}
+          title="输入文件夹名称"
+          description={<Input placeholder="输入文件夹名称" onChange={onAddFolderChange} onPressEnter={pressAddFolderEnterHelper(nodeData)} allowClear/>}
+          onConfirm={addFolderConfirmHelper(nodeData)}
+          onPopupClick={e => e?.stopPropagation()}
+          open={addFolderOpen[key.toString()]}
+          onOpenChange={(newOpen) => setAddFolderOpen[key.toString()](newOpen)}
+          okText="新建文件夹"
+          cancelText="取消">
+            <Tooltip placement="bottom" title={isLeaf ? '无法在文件下添加文件夹' : '添加文件夹'}>
+              <Button size={'small'} type="text" disabled={isLeaf} onClick={e => e?.stopPropagation()}><FolderAddOutlined /></Button>
+            </Tooltip>
+          </Popconfirm>
+          <Popconfirm
+          title="删除当前及以下的所有文件和文件夹"
+          description="是否确定删除当前及以下的所有文件和文件夹？"
+          onConfirm={deleteDataConfirmHelper(nodeData)}
+          onPopupClick={e => e?.stopPropagation()}
+          okText="确定"
+          cancelText="取消">
+            <Tooltip placement="bottom" title={isRoot ? '不可删除根目录' : '删除当前及以下的所有文件和文件夹'}>
+              <Button danger size={'small'} type="text" disabled={isRoot} onClick={e => e?.stopPropagation()}><DeleteOutlined /></Button>
+            </Tooltip>
+          </Popconfirm>
+        </span>
+      </span>
     );
-  }
+  };
   const onChange: InputProps['onChange'] = e =>
   {
     const content = e.target.value;
@@ -275,53 +286,52 @@ const Directory: FC<PropsType> = ({ pageType, isVisible }) =>
     dispatch(closeInfo());
   };
 
-  let alertHolder =
-  <Alert
-  message="提示"
-  description="可以通过拖拽文件或文件夹移动它们的位置"
-  type="info"
-  closable={{closeIcon: <span className={styles['close-button']}><CloseOutlined /><span style={{textAlign: 'center'}}>不再提示我</span></span>}}
-  style={{marginBottom: '20px'}}
-  onClose={onClose}
-  showIcon/>;
-  if (!showInfo)alertHolder = <></>;
-
   useEffect(() =>
   {
-    if (pageType === 'DirectoryPage')
-    {
+    if (pageType === 'DirectoryPage') {
       dispatch(saveExpandedKeys(expandedKeys));
     }
-  }, [expandedKeys]);
-
+  }, [expandedKeys, pageType, dispatch]);
   useEffect(() =>
   {
-    if (pageType === 'DetailPage')
-    {
+    if (pageType === 'DetailPage') {
       setExpandedKeys([currentPageKey as string]);
     }
-    console.log('current page key: ', currentPageKey);
-  }, [currentPageKey]);
+  }, [currentPageKey, pageType]);
 
   return (
-    <div className={styles['container']} style={{display: isVisible ? 'block' : 'none'}}>
-      {/* 可选：只有选中时才会显示右侧的按钮 */}
-      {alertHolder}
-      <Input placeholder="输入以检索文件夹或文件" value={inputContent} onChange={onChange} allowClear/>
-      <DirectoryTree
-      showLine
-      draggable
-      selectable={pageType === 'DetailPage'}
-      selectedKeys={pageType === 'DetailPage' ? [currentPageKey as string] : []}
-      onDrop={onDropHelper(directoryData, (newDirectoryData: TreeDataNode[]) => dispatch(setDirectoryData(newDirectoryData)))}
-      onSelect={onSelect}
-      onExpand={onExpand}
-      treeData={directoryData}
-      titleRender={titleRender}
-      expandedKeys={expandedKeys}
-      autoExpandParent={autoExpandParent}
-      style={{marginTop: '20px'}}/>
-    </div>
+    isVisible && (
+      <div className={styles['container']}>
+        {showInfo && (
+          <Alert
+          message="提示"
+          description="可以通过拖拽文件或文件夹移动它们的位置"
+          type="info"
+          closable={{ closeIcon: <span className={styles['close-button']}><CloseOutlined /><span>不再提示我</span></span> }}
+          style={{ marginBottom: '20px' }}
+          onClose={onClose}
+          showIcon/>
+        )}
+        <Input placeholder="输入以检索文件夹或文件" value={inputContent} onChange={onChange} allowClear/>
+        <DirectoryTree
+        showLine
+        draggable
+        selectable={pageType === 'DetailPage'}
+        selectedKeys={pageType === 'DetailPage' ? [currentPageKey as string] : []}
+        onDrop={onDropHelper(directoryData, (newDirectoryData: TreeDataNode[]) => dispatch(setDirectoryData(newDirectoryData)))}
+        onSelect={onSelect}
+        onMouseEnter={info =>
+        {
+          setMouseOverKey(info.node.key.toString());
+          console.log(info);
+        }}
+        onExpand={onExpand}
+        treeData={directoryData}
+        titleRender={titleRender}
+        expandedKeys={expandedKeys}
+        autoExpandParent={autoExpandParent}/>
+      </div>
+    )
   );
 };
 
