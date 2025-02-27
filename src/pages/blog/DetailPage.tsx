@@ -1,7 +1,7 @@
 import { BLOG_PREFIX, TITLE_PREFIX } from "@/constant";
 import Directory from "@/features/blog/Directory";
 import { useTitle } from "ahooks";
-import { Breadcrumb, Button, InputProps, Layout, message, Modal, Space } from "antd";
+import { Breadcrumb, Button, InputProps, Layout, message, Space } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { FC, useEffect, useState } from "react";
 import styles from './DetailPage.module.css';
@@ -15,19 +15,29 @@ import { MdEditor, MdPreview, ToolbarNames } from "md-editor-rt";
 import 'md-editor-rt/lib/style.css';
 import { searchPath } from "@/util/blog";
 
+const toolbarsExclude: ToolbarNames[] =
+[
+  'github',
+  'catalog',
+  'prettier',
+  'fullscreen',
+  'htmlPreview',
+  'pageFullscreen',
+  'preview',
+  'previewOnly',
+  'save'
+];
 const DetailPage: FC = () =>
 {
   useTitle(TITLE_PREFIX + BLOG_PREFIX + '详情');
 
   const { key: currentPageKey } = useParams();
 
-  const toolbarsExclude: ToolbarNames[] = ['github', 'catalog', 'prettier', 'fullscreen', 'htmlPreview', 'pageFullscreen', 'preview', 'previewOnly', 'save'];
   const currentPath = searchPath(currentPageKey!);
 
   const dispatch = useDispatch();
 
   const [collapsed, setCollapsed] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [uploadFileHandle, setUploadFileHandle] = useState<FileSystemFileHandle>();
   const savedBlogContent = useSelector(selectSavedBlogContent);
   const [content, setContent] = useState(savedBlogContent[currentPageKey!]?.content ?? '');
@@ -35,10 +45,6 @@ const DetailPage: FC = () =>
   const savedEditorMode = useSelector(selectSaveEditorMode);
   const [editorMode, setEditorMode] = useState(savedEditorMode[currentPageKey!] ?? 'preview');
 
-  const showModal = () =>
-  {
-    setIsModalOpen(true);
-  };
   async function handleOpenFile(fn?: Function)
   {
     try
@@ -65,15 +71,6 @@ const DetailPage: FC = () =>
       messageApi.error(`从本地同步到系统失败：${err}`, 5);
     }
   }
-  const handleOk = async () =>
-  {
-    handleOpenFile(() => setIsModalOpen(false));
-  };
-  const handleCancel = () =>
-  {
-    setIsModalOpen(false);
-    messageApi.info('取消从本地同步到系统');
-  };
   const onClickUpload: InputProps['onClick'] = async () =>
   {
     await handleOpenFile();
@@ -110,23 +107,21 @@ const DetailPage: FC = () =>
   {
     dispatch(setLastOpenedFile(currentPageKey?.toString()));
     setCollapsed(true);
-    setIsModalOpen(false);
     setUploadFileHandle(undefined);
     if (content !== (savedBlogContent[currentPageKey!]?.content ?? ''))
     {
       setContent(savedBlogContent[currentPageKey!]?.content ?? '');
     }
     setEditorMode(savedEditorMode[currentPageKey!] ?? 'preview');
-    // showModal();
   }, [currentPageKey]);
   useEffect(() =>
   {
-    dispatch(saveEditorMode(editorMode));
+    dispatch(saveEditorMode(
+    {
+      key: currentPageKey,
+      newEditorMode: editorMode,
+    }));
   }, [editorMode]);
-  useEffect(() =>
-  {
-    // showModal();
-  }, []);
   useEffect(() =>
   {
     const timer = setTimeout(() =>
@@ -141,7 +136,7 @@ const DetailPage: FC = () =>
           content,
         },
       }));
-    }, 2000);
+    }, 10000);
     // 清除上一次的定时器，防止用户快速输入时产生多次不必要的更新
     return () => clearTimeout(timer);
   }, [content]);
@@ -149,14 +144,6 @@ const DetailPage: FC = () =>
   return (
     <Layout className={styles['layout']}>
       {contextHolder}
-      {/* <Modal
-      closable={false}
-      title={'是否将本地Markdown文件同步到系统中' + (savedBlogContent[currentPageKey!] ? `（系统中文件上次修改时间为 "${savedBlogContent[currentPageKey!].lastModifiedTime}" ）` : '') + '？'}
-      open={isModalOpen}
-      onOk={handleOk}
-      onCancel={handleCancel}
-      okText="是"
-      cancelText="否" /> */}
       <Sider
       collapsible
       collapsed={collapsed}
@@ -176,11 +163,15 @@ const DetailPage: FC = () =>
         </div>
         <div className={styles['md-wrapper']}>
           <div className={styles['breadcrumb-wrapper']}>
-            <Breadcrumb
-            items={currentPath}/>
+            <Breadcrumb items={currentPath}/>
           </div>
-          <MdEditor value={content} onChange={setContent} style={{display: editorMode === 'edit' ? '' : 'none'}} toolbarsExclude={toolbarsExclude} className={styles['md']}/>
-          <MdPreview value={content} style={{display: editorMode === 'preview' ? '' : 'none'}} className={styles['md']}/>
+          {
+            editorMode === 'edit' ? (
+              <MdEditor value={content} onChange={setContent} toolbarsExclude={toolbarsExclude} className={styles['md']}/>
+            ) : (
+              <MdPreview value={content} className={styles['md']}/>
+            )
+          }
         </div>
       </Content>
     </Layout>

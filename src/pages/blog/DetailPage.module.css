@@ -12,7 +12,7 @@
   padding: 1px !important;
 }
 .md {
-  height: calc(100vh - 64px - 20px - 32px - 20px - 22px) !important;
+  height: calc(100vh - 64px - 20px - 32px - 20px - 22px - 22px) !important;
   width: 97% !important;
   margin-bottom: 20px !important;
   border: 1.5px solid rgba(5, 5, 5, 0.06) !important;

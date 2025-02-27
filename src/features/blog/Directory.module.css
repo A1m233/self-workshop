@@ -4,7 +4,7 @@
   padding: 20px;
   display: flex !important;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   gap: 20px;
 }
 :global(.ant-tree-title > span > :nth-child(2)) {

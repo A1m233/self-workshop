@@ -1,8 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import HomePage from "@/pages/HomePage";
-import StatisticsPage from "@/pages/todo/StatisticsPage";
-import FinishedTodosPage from "@/pages/todo/FinishedTodosPage";
+// import StatisticsPage from "@/pages/todo/StatisticsPage";
+// import FinishedTodosPage from "@/pages/todo/FinishedTodosPage";
 import UnfinishedTodosPage from "@/pages/todo/UnfinishedTodosPage";
 import DueTodosPage from "@/pages/todo/DueTodosPage";
 import ExpiredTodosPage from "@/pages/todo/ExpiredTodosPage";
@@ -10,7 +10,12 @@ import AllTodosPage from "@/pages/todo/AllTodosPage";
 import DirectoryPage from "@/pages/blog/DirectoryPage";
 import DetailPage from "@/pages/blog/DetailPage";
 import MainLayout from "@/layouts/MainLayout";
-import NotFoundPage from "@/pages/NotFoundPage";
+// import NotFoundPage from "@/pages/NotFoundPage";
+import { lazy } from "react";
+
+const StatisticsPage = lazy(() => import('@/pages/todo/StatisticsPage'));
+const FinishedTodosPage = lazy(() => import('@/pages/todo/FinishedTodosPage'));
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 
 const router = createBrowserRouter(
 [
