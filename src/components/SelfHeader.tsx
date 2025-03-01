@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { AlertFilled, CloudFilled, FileTextFilled, ToolFilled } from "@ant-design/icons";
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
@@ -18,66 +18,75 @@ const SelfHeader: FC = () =>
   const {pathname} = useLocation();
   const lastOpenedFile = useSelector(selectLastOpenedFile);
 
-  const items: MenuItem[] =
-  [
-    {
-      label:
-      <Link to='/'>
-        Self Workshop
-      </Link>,
-      key: '/',
-      icon: <ToolFilled />,
-    },
-    {
-      label: '待办事项',
-      key: 'todo',
-      icon: <FileTextFilled />,
-      children:
-      [
-        {
-          type: 'group',
-          label: '列表',
-          children:
-          [
-            { label: <Link to='/todo/list/all'>全部待办事项</Link>, key: '/todo/list/all' },
-            { label: <Link to='/todo/list/finished'>已完成待办事项</Link>, key: '/todo/list/finished' },
-            { label: <Link to='/todo/list/unfinished'>未将到期且未完成待办事项</Link>, key: '/todo/list/unfinished' },
-            { label: <Link to='/todo/list/due'>即将到期待办事项</Link>, key: '/todo/list/due' },
-            { label: <Link to='/todo/list/expired'>到期待办事项</Link>, key: '/todo/list/expired' },
-          ],
-        },
-        {
-          type: 'group',
-          label: '统计',
-          children:
-          [
-            { label: <Link to='/todo/statistics'>统计数据</Link>, key: '/todo/statistics' },
-          ],
-        },
-      ],
-    },
-    {
-      label: '个人博客',
-      key: 'blog',
-      icon: <CloudFilled />,
-      children:
-      [
-        {
-          label: <Link to='/blog/directory'>目录结构</Link>,
-          key: '/blog/directory',
-        },
-        {
-          label: <Link to={'/blog/detail/' + lastOpenedFile}>详情</Link>,
-          key: '/blog/detail',
-        },
-      ],
-    },
-  ];
+  const items: MenuItem[] = useMemo(() =>
+  {
+    const res =
+    [
+      {
+        label:
+        <Link to='/'>
+          Self Workshop
+        </Link>,
+        key: '/',
+        icon: <ToolFilled />,
+      },
+      {
+        label: '待办事项',
+        key: 'todo',
+        icon: <FileTextFilled />,
+        children:
+        [
+          {
+            type: 'group',
+            label: '列表',
+            children:
+            [
+              { label: <Link to='/todo/list/all'>全部待办事项</Link>, key: '/todo/list/all' },
+              { label: <Link to='/todo/list/finished'>已完成待办事项</Link>, key: '/todo/list/finished' },
+              { label: <Link to='/todo/list/unfinished'>未将到期且未完成待办事项</Link>, key: '/todo/list/unfinished' },
+              { label: <Link to='/todo/list/due'>即将到期待办事项</Link>, key: '/todo/list/due' },
+              { label: <Link to='/todo/list/expired'>到期待办事项</Link>, key: '/todo/list/expired' },
+            ],
+          },
+          {
+            type: 'group',
+            label: '统计',
+            children:
+            [
+              { label: <Link to='/todo/statistics'>统计数据</Link>, key: '/todo/statistics' },
+            ],
+          },
+        ],
+      },
+      {
+        label: '个人博客',
+        key: 'blog',
+        icon: <CloudFilled />,
+        children:
+        [
+          {
+            label: <Link to='/blog/directory'>目录结构</Link>,
+            key: '/blog/directory',
+          },
+          {
+            label: <Link to={'/blog/detail/' + lastOpenedFile}>详情</Link>,
+            key: '/blog/detail',
+          },
+        ],
+      },
+    ];
+    return res;
+  }, [lastOpenedFile]);
+
+  const selectedKeys = useMemo(() =>
+  {
+    return [pathname.includes('/blog/detail') ? '/blog/detail' : pathname];
+  }, [pathname]);
 
   return (
     <Header className={styles['antd-header']}>
       <div style={{flex: 1}}>
-        <Menu mode="horizontal" items={items} theme='dark' className={styles['header-menu']} selectedKeys={[pathname.includes('/blog/detail') ? '/blog/detail' : pathname]}/>
+        <Menu mode="horizontal" items={items} theme='dark' className={styles['header-menu']} selectedKeys={selectedKeys}/>
       </div>
       <div className={styles['reminder-wrapper']}>
         <p className={styles['reminder']}>

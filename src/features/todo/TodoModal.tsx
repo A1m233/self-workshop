@@ -1,7 +1,7 @@
 // TodoModal.tsx
-import { DatePicker, Form, Input, message, Modal } from "antd";
-import { useForm } from "antd/es/form/Form";
-import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
+import { DatePicker, Form, Input, message, Modal, ModalProps } from "antd";
+import { FormProps, useForm } from "antd/es/form/Form";
+import { forwardRef, memo, useCallback, useImperativeHandle, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addTodo, editTodo } from "./todoSlice";
 import dayjs from "dayjs";
@@ -17,10 +17,8 @@ export interface TodoModalHandles
   showModal: () => void;
 };
 
-const TodoModal = forwardRef<TodoModalHandles, PropsType>((props, ref) =>
+const TodoModal = forwardRef<TodoModalHandles, PropsType>(({ expiration, content, id }, ref) =>
 {
-  const { expiration, content, id } = props;
-
   const actionType = id === undefined ? '新建' : '编辑';
 
   const initialValues =
@@ -39,7 +37,7 @@ const TodoModal = forwardRef<TodoModalHandles, PropsType>((props, ref) =>
     showModal,
   }));
 
-  function onFinish(fieldsValue: any)
+  const onFinish: FormProps['onFinish'] = useCallback((fieldsValue: any) =>
   {
     if (actionType === '新建')
     {
@@ -59,12 +57,12 @@ const TodoModal = forwardRef<TodoModalHandles, PropsType>((props, ref) =>
         expiration: fieldsValue['expiration'].valueOf(),
       }));
     }
-  }
+  }, [id]);
   const showModal = useCallback(() =>
   {
     setIsModalOpen(true);
   }, []);
-  function handleOk()
+  const onOk: ModalProps['onOk'] = useCallback(() =>
   {
     form.validateFields().then(() =>
     {
@@ -72,12 +70,12 @@ const TodoModal = forwardRef<TodoModalHandles, PropsType>((props, ref) =>
       setIsModalOpen(false);
       messageApi.success('成功' + actionType + '待办事项');
     });
-  };
-  function handleCancel()
+  }, []);
+  const onCancel: ModalProps['onCancel'] = useCallback(() =>
   {
     setIsModalOpen(false);
     messageApi.info('取消' + actionType + '待办事项');
-  };
+  }, []);
 
   return (
     <>
@@ -85,8 +83,8 @@ const TodoModal = forwardRef<TodoModalHandles, PropsType>((props, ref) =>
       <Modal
       title={'填写内容以' + actionType + '待办事项'}
       open={isModalOpen}
-      onOk={handleOk}
-      onCancel={handleCancel}
+      onOk={onOk}
+      onCancel={onCancel}
       okText={actionType + '待办事项'}
       cancelText={'取消' + actionType + '待办事项'}
       afterClose={() => form.resetFields()}>
@@ -118,4 +116,4 @@ const TodoModal = forwardRef<TodoModalHandles, PropsType>((props, ref) =>
   )
 });
 
-export default TodoModal;
+export default memo(TodoModal);

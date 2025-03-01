@@ -1,5 +1,5 @@
 // Directory.tsx
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import styles from './Directory.module.css';
 import { Alert, AlertProps, Button, Input, InputProps, Popconfirm, Tooltip, TreeDataNode } from "antd";
 import { DirectoryTreeProps } from "antd/es/tree";
@@ -70,9 +70,9 @@ const Directory: FC<PropsType> = ({ pageType, isVisible }) =>
   const [setAddFileOpen] = useState(initialState.setAddFileOpenTmp);
   const [setAddFolderOpen] = useState(initialState.setAddFolderOpenTmp);
 
-  const onSelect: DirectoryTreeProps['onSelect'] = (keys, info) =>
+  const onSelect: DirectoryTreeProps['onSelect'] = useCallback((_keys: any, info: any) =>
   {
-    // console.log('Trigger Select', keys, info);
+    // console.log('Trigger Select', _keys, info);
     if (!info.node.isLeaf)
     {
       const underLeafKeys = getUnderLeafKeys(info.node.key);
@@ -83,22 +83,22 @@ const Directory: FC<PropsType> = ({ pageType, isVisible }) =>
     {
       nav(`/blog/detail/${info.node.key}`);
     }
-  };
-  const onEditNameChange: InputProps['onChange'] = e =>
+  }, [expandedKeys, currentPageKey]);
+  const onEditNameChange: InputProps['onChange'] = useCallback((e: any) =>
   {
     setEditNameInputContent(e.target.value);
-  };
-  const onAddFileChange: InputProps['onChange'] = e =>
+  }, []);
+  const onAddFileChange: InputProps['onChange'] = useCallback((e: any) =>
   {
     setAddFileInputContent(e.target.value);
-  };
-  const onAddFolderChange: InputProps['onChange'] = e =>
+  }, []);
+  const onAddFolderChange: InputProps['onChange'] = useCallback((e: any) =>
   {
     setAddFolderInputContent(e.target.value);
-  };
-  const editNameConfirmHelper = (node: TreeDataNode) =>
+  }, []);
+  const editNameConfirmHelper = useCallback((node: TreeDataNode) =>
   {
-    return () =>
+    function onConfirm()
     {
       dispatch(editTitle(
       {
@@ -106,10 +106,11 @@ const Directory: FC<PropsType> = ({ pageType, isVisible }) =>
         title: editNameInputContent,
       }));
     };
-  };
-  const addFileConfirmHelper = (node: TreeDataNode) =>
+    return onConfirm;
+  }, []);
+  const addFileConfirmHelper = useCallback((node: TreeDataNode) =>
   {
-    return () =>
+    function onConfirm()
     {
       dispatch(addFile(
       {
@@ -118,10 +119,11 @@ const Directory: FC<PropsType> = ({ pageType, isVisible }) =>
       }));
       setExpandedKeys([...expandedKeys, node.key]);
     };
-  };
-  const addFolderConfirmHelper = (node: TreeDataNode) =>
+    return onConfirm;
+  }, []);
+  const addFolderConfirmHelper = useCallback((node: TreeDataNode) =>
   {
-    return () =>
+    function onConfirm()
     {
       dispatch(addFolder(
       {
@@ -130,42 +132,45 @@ const Directory: FC<PropsType> = ({ pageType, isVisible }) =>
       }));
       setExpandedKeys([...expandedKeys, node.key]);
     };
-  };
-  const deleteDataConfirmHelper = (node: TreeDataNode) =>
+    return onConfirm;
+  } ,[]);
+  const deleteDataConfirmHelper = useCallback((node: TreeDataNode) =>
   {
-    return () =>
+    function onConfirm()
     {
       dispatch(deleteData(node));
     };
-  };
-  const pressEditNameEnterHelper = (node: TreeDataNode) =>
+    return onConfirm;
+  }, []);
+  const pressEditNameEnterHelper = useCallback((node: TreeDataNode) =>
   {
-    return () =>
+    function onEnter()
     {
       editNameConfirmHelper(node)();
       setEditNameOpen[node.key.toString()](false);
     };
-  };
-  const pressAddFileEnterHelper = (node: TreeDataNode) =>
+    return onEnter;    
+  }, []);
+  const pressAddFileEnterHelper = useCallback((node: TreeDataNode) =>
   {
-    return () =>
+    function onEnter()
     {
-      console.log('*');
       addFileConfirmHelper(node)();
       setAddFileOpen[node.key.toString()](false);
     };
-  };
-  const pressAddFolderEnterHelper = (node: TreeDataNode) =>
+    return onEnter;
+  }, []);
+  const pressAddFolderEnterHelper = useCallback((node: TreeDataNode) =>
   {
-    return () =>
+    function onEnter()
     {
       addFolderConfirmHelper(node)();
       setAddFolderOpen[node.key.toString()](false);
     };
-  };
-  const titleRender = (nodeData: TreeDataNode) =>
+    return onEnter;
+  }, []);
+  const titleRender = useCallback((nodeData: TreeDataNode) =>
   {
-    // 思考：是否应该缓存起来？
     const title = nodeData.title as string;
     const key = nodeData.key;
     const isRoot = key === '0';
@@ -249,8 +254,8 @@ const Directory: FC<PropsType> = ({ pageType, isVisible }) =>
         </span>
       </span>
     );
-  };
-  const onChange: InputProps['onChange'] = e =>
+  }, [mouseOverKey]);
+  const onChange: InputProps['onChange'] = useCallback((e: any) =>
   {
     const content = e.target.value;
     setInputContent(content);
@@ -275,26 +280,32 @@ const Directory: FC<PropsType> = ({ pageType, isVisible }) =>
     getSearchedKeys(directoryData[0]);
     setExpandedKeys(tmp);
     setAutoExpandParent(true);
-  };
-  const onExpand = (newExpandedKeys: React.Key[]) =>
+  }, [directoryData]);
+  const onExpand = useCallback((newExpandedKeys: React.Key[]) =>
   {
     setExpandedKeys(newExpandedKeys);
     setAutoExpandParent(false);
-  };
-  const onClose: AlertProps['onClose'] = () =>
+  }, []);
+  const onClose: AlertProps['onClose'] = useCallback(() =>
   {
     dispatch(closeInfo());
-  };
+  }, []);
+  const onMouseEnter: DirectoryTreeProps['onMouseEnter'] = useCallback((info: any) =>
+  {
+    setMouseOverKey(info.node.key.toString());
+  }, []);
 
   useEffect(() =>
   {
-    if (pageType === 'DirectoryPage') {
+    if (pageType === 'DirectoryPage')
+    {
       dispatch(saveExpandedKeys(expandedKeys));
     }
   }, [expandedKeys, pageType, dispatch]);
   useEffect(() =>
   {
-    if (pageType === 'DetailPage') {
+    if (pageType === 'DetailPage')
+    {
       setExpandedKeys([currentPageKey as string]);
     }
   }, [currentPageKey, pageType]);
@@ -320,11 +331,7 @@ const Directory: FC<PropsType> = ({ pageType, isVisible }) =>
         selectedKeys={pageType === 'DetailPage' ? [currentPageKey as string] : []}
         onDrop={onDropHelper(directoryData, (newDirectoryData: TreeDataNode[]) => dispatch(setDirectoryData(newDirectoryData)))}
         onSelect={onSelect}
-        onMouseEnter={info =>
-        {
-          setMouseOverKey(info.node.key.toString());
-          console.log(info);
-        }}
+        onMouseEnter={onMouseEnter}
         onExpand={onExpand}
         treeData={directoryData}
         titleRender={titleRender}

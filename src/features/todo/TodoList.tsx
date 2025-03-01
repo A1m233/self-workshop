@@ -12,10 +12,8 @@ interface PropsType
   todoList: TodoType[],
 };
 
-const TodoList: FC<PropsType> = memo(props =>
+const TodoList: FC<PropsType> = memo(({ pageType, todoList }) =>
 {
-  const { pageType, todoList } = props;
-
   const todoModalRef = useRef<TodoModalHandles>(null);
 
   const [inputContent, setInputContent] = useState('');
@@ -25,15 +23,14 @@ const TodoList: FC<PropsType> = memo(props =>
     return todoList.filter(todo => todo.content.includes(debouncedInputContent));
   }, [debouncedInputContent, todoList]);
   const [currentPage, setCurrentPage] = useState(1);
-
-  useEffect(() =>
+  const pagedTodoList = useMemo(() =>
   {
-    const timer = setTimeout(() =>
+    return searchedTodoList.slice((currentPage - 1) * 10, currentPage * 10).map(todo =>
     {
-      setDebouncedInputContent(inputContent);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [inputContent]);
+      return <Todo todo={todo} key={todo.id}/>
+    })
+  }, [searchedTodoList, currentPage]);
+
   const onChange: InputProps['onChange'] = useCallback((e: any) =>
   {
     setInputContent(e.target.value);
@@ -50,6 +47,15 @@ const TodoList: FC<PropsType> = memo(props =>
     setCurrentPage(page);
   }, []);
 
+  useEffect(() =>
+  {
+    const timer = setTimeout(() =>
+    {
+      setDebouncedInputContent(inputContent);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [inputContent]);
+
   return (
     <div>
       <div className={styles['header']}>
@@ -65,12 +71,7 @@ const TodoList: FC<PropsType> = memo(props =>
         <Button type="primary" onClick={showModal}>新建待办事项</Button>
         <TodoModal ref={todoModalRef} />
         <div className={styles['todolist-wrapper']}>
-          {
-            searchedTodoList.slice((currentPage - 1) * 10, currentPage * 10).map(todo =>
-            {
-              return <Todo todo={todo} key={todo.id}/>
-            })
-          }
+          {pagedTodoList}
           <Pagination
           align='center'
           total={searchedTodoList.length}

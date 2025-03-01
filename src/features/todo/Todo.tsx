@@ -1,7 +1,7 @@
 // Todo.tsx
 import type { TodoType } from "@/types/todo";
-import { App, Button, ButtonProps, Card, Checkbox, CheckboxProps, Popconfirm, PopconfirmProps, Space, Tooltip } from "antd";
-import { FC, memo, useRef, useState } from "react";
+import { App, Button, ButtonProps, Card, CardProps, Checkbox, CheckboxProps, Popconfirm, PopconfirmProps, Space, Tooltip } from "antd";
+import { FC, memo, useCallback, useRef, useState } from "react";
 import styles from './Todo.module.css';
 import { deleteTodo, switchTodoState } from "./todoSlice";
 import { useDispatch } from "react-redux";
@@ -14,11 +14,10 @@ interface PropsType
   todo: TodoType,
 };
 
-const TodoInner: FC<PropsType> = memo(props =>
+const TodoInner: FC<PropsType> = memo(({ todo }) =>
 {
   const { message } = App.useApp();
 
-  const { todo } = props;
   const { isFinished, content, expiration, id } = todo;
   
   const dispatch = useDispatch();
@@ -26,18 +25,18 @@ const TodoInner: FC<PropsType> = memo(props =>
   const todoModalRef = useRef<TodoModalHandles>(null);
   const [isMouseOver, setIsMouseOver] = useState(false);
 
-  const showModal = () =>
+  const showModal = useCallback(() =>
   {
     if (todoModalRef.current)
     {
       todoModalRef.current.showModal();
     }
-  };
-  const onChange: CheckboxProps['onChange'] = () =>
+  }, [todoModalRef]);
+  const onChange: CheckboxProps['onChange'] = useCallback(() =>
   {
     dispatch(switchTodoState(id));
-  };
-  const handleCopy: ButtonProps['onClick'] = async () =>
+  }, [id]);
+  const handleCopy: ButtonProps['onClick'] = useCallback(async () =>
   {
     await navigator.clipboard.writeText(content);
     message.open(
@@ -45,23 +44,25 @@ const TodoInner: FC<PropsType> = memo(props =>
       type: 'success',
       content: '成功将待办事项内容复制到粘贴板',
     });
-  };
-  function handleDelete()
+  }, [content]);
+  const handleDelete = useCallback(() =>
   {
     dispatch(deleteTodo(id));
-  }
-  const onConfirm: PopconfirmProps['onConfirm'] = () =>
+  }, [id]);
+  const onConfirm: PopconfirmProps['onConfirm'] = useCallback(() =>
   {
     handleDelete();
-  };
+  }, [handleDelete]);
+  const onMouseOver: CardProps['onMouseOver'] = useCallback(() => setIsMouseOver(true), []);
+  const onMouseLeave: CardProps['onMouseLeave'] = useCallback(() => setIsMouseOver(false), []);
 
   return (
     <>
       <Card
       classNames={{body: styles['todo-card-body']}}
       className={styles['todo-card']}
-      onMouseOver={() => setIsMouseOver(true)}
-      onMouseLeave={() => setIsMouseOver(false)}
+      onMouseOver={onMouseOver}
+      onMouseLeave={onMouseLeave}
       hoverable>
         <TodoModal
         ref={todoModalRef}
@@ -111,7 +112,6 @@ const TodoInner: FC<PropsType> = memo(props =>
                 </>
               )
             }
-            
           </Space.Compact>
         </div>
       </Card>
@@ -119,9 +119,8 @@ const TodoInner: FC<PropsType> = memo(props =>
   );
 });
 
-const Todo: FC<PropsType> = memo(props =>
+const Todo: FC<PropsType> = memo(({ todo }) =>
 {
-  const { todo } = props;
   return (
     <App>
       <TodoInner todo={todo}/>

@@ -55,7 +55,7 @@ const MainLayout: FC = () =>
       checkExpiration();
     }, 60 * 1000);
     return () => clearInterval(intervalId);
-  });
+  }, [todoList]);
 
   return (
     <Layout className={styles['layout']}>

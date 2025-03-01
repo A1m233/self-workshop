@@ -1,9 +1,9 @@
 import { BLOG_PREFIX, TITLE_PREFIX } from "@/constant";
 import Directory from "@/features/blog/Directory";
 import { useTitle } from "ahooks";
-import { Breadcrumb, Button, InputProps, Layout, message, Space } from "antd";
-import Sider from "antd/es/layout/Sider";
-import { FC, useEffect, useState } from "react";
+import { Breadcrumb, Button, ButtonProps, InputProps, Layout, message, Space } from "antd";
+import Sider, { SiderProps } from "antd/es/layout/Sider";
+import { FC, useCallback, useEffect, useState } from "react";
 import styles from './DetailPage.module.css';
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,6 +27,7 @@ const toolbarsExclude: ToolbarNames[] =
   'previewOnly',
   'save'
 ];
+const syncButtonStyle = {fontSize: '18px'};
 const DetailPage: FC = () =>
 {
   useTitle(TITLE_PREFIX + BLOG_PREFIX + '详情');
@@ -45,7 +46,7 @@ const DetailPage: FC = () =>
   const savedEditorMode = useSelector(selectSaveEditorMode);
   const [editorMode, setEditorMode] = useState(savedEditorMode[currentPageKey!] ?? 'preview');
 
-  async function handleOpenFile(fn?: Function)
+  const handleOpenFile = async function (fn?: Function)
   {
     try
     {
@@ -71,11 +72,11 @@ const DetailPage: FC = () =>
       messageApi.error(`从本地同步到系统失败：${err}`, 5);
     }
   }
-  const onClickUpload: InputProps['onClick'] = async () =>
+  const onClickUpload: InputProps['onClick'] = useCallback(async () =>
   {
     await handleOpenFile();
-  };
-  const onClickDownload: InputProps['onClick'] = async () =>
+  }, [handleOpenFile]);
+  const onClickDownload: InputProps['onClick'] = useCallback(async () =>
   {
     try
     {
@@ -101,7 +102,10 @@ const DetailPage: FC = () =>
       messageApi.error(`从系统同步到本地失败：${err}`, 5);
       console.log(err);
     }
-  };
+  }, [uploadFileHandle, content]);
+  const onEditClick: ButtonProps['onClick'] = useCallback(() => setEditorMode('edit'), []);
+  const onPreviewClick: ButtonProps['onClick'] = useCallback(() => setEditorMode('preview'), []);
+  const onCollapse: SiderProps['onCollapse'] = useCallback((value: any) => setCollapsed(value), []);
 
   useEffect(() =>
   {
@@ -137,7 +141,6 @@ const DetailPage: FC = () =>
         },
       }));
     }, 10000);
-    // 清除上一次的定时器，防止用户快速输入时产生多次不必要的更新
     return () => clearTimeout(timer);
   }, [content]);
 
@@ -147,33 +150,35 @@ const DetailPage: FC = () =>
       <Sider
       collapsible
       collapsed={collapsed}
-      onCollapse={(value) => setCollapsed(value)}
+      onCollapse={onCollapse}
       width={'95%'}
       collapsedWidth="0">
         <Directory pageType="DetailPage" isVisible={!collapsed}/>
       </Sider>
-      <Content className={styles['content']} style={{display: collapsed ? '' : 'none'}}>
-        <div className={styles['button-group']}>
-          <Button onClick={onClickUpload} type="primary"><CloudUploadOutlined style={{fontSize: '18px'}}/>将本地Markdown文件同步到系统中</Button>
-          <Space.Compact>
-            <Button onClick={() => setEditorMode('preview')} type={editorMode === 'preview' ? 'primary' : 'default'} shape="round">预览模式</Button>
-            <Button onClick={() => setEditorMode('edit')} type={editorMode === 'edit' ? 'primary' : 'default'} shape="round">编辑模式</Button>
-          </Space.Compact>
-          <Button onClick={onClickDownload} type="primary"><CloudDownloadOutlined style={{fontSize: '18px'}} />将系统中Markdown文件同步到本地</Button>
-        </div>
-        <div className={styles['md-wrapper']}>
-          <div className={styles['breadcrumb-wrapper']}>
-            <Breadcrumb items={currentPath}/>
+      {collapsed && (
+        <Content className={styles['content']}>
+          <div className={styles['button-group']}>
+            <Button onClick={onClickUpload} type="primary"><CloudUploadOutlined style={syncButtonStyle}/>将本地Markdown文件同步到系统中</Button>
+            <Space.Compact>
+              <Button onClick={onPreviewClick} type={editorMode === 'preview' ? 'primary' : 'default'} shape="round">预览模式</Button>
+              <Button onClick={onEditClick} type={editorMode === 'edit' ? 'primary' : 'default'} shape="round">编辑模式</Button>
+            </Space.Compact>
+            <Button onClick={onClickDownload} type="primary"><CloudDownloadOutlined style={syncButtonStyle} />将系统中Markdown文件同步到本地</Button>
           </div>
-          {
-            editorMode === 'edit' ? (
-              <MdEditor value={content} onChange={setContent} toolbarsExclude={toolbarsExclude} className={styles['md']}/>
-            ) : (
-              <MdPreview value={content} className={styles['md']}/>
-            )
-          }
-        </div>
-      </Content>
+          <div className={styles['md-wrapper']}>
+            <div className={styles['breadcrumb-wrapper']}>
+              <Breadcrumb items={currentPath}/>
+            </div>
+            {
+              editorMode === 'edit' ? (
+                <MdEditor value={content} onChange={setContent} toolbarsExclude={toolbarsExclude} className={styles['md']}/>
+              ) : (
+                <MdPreview value={content} className={styles['md']}/>
+              )
+            }
+          </div>
+        </Content>
+      )}
     </Layout>
   );
 };

@@ -1,10 +1,10 @@
 // store.ts
 import todoReducer from "@/features/todo/todoSlice";
 import blogReducer from "@/features/blog/blogSlice";
-import { applyMiddleware, combineReducers, configureStore, createStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import { createStateSyncMiddleware, initStateWithPrevTab } from "redux-state-sync";
+import { createStateSyncMiddleware } from "redux-state-sync";
 
 const rootReducer = combineReducers(
 { 
@@ -29,7 +29,7 @@ const asyncConfig =
   blacklist: [],
   broadcastChannelOption: { type: 'localstorage' },
 };
-const asyncMiddleware = createStateSyncMiddleware(asyncConfig);
+const asyncMiddleware = createStateSyncMiddleware(asyncConfig as any);
 
 export const store = configureStore(
 {
@@ -38,10 +38,8 @@ export const store = configureStore(
   middleware: getDefaultMiddleware => getDefaultMiddleware(
   {
     serializableCheck: false,
-  }).concat(asyncMiddleware),
+  }).concat(asyncMiddleware) as any,
 });
-
-// initStateWithPrevTab(store);
 
 // 导出store和持久化后的store
 export const persistor = persistStore(store);
