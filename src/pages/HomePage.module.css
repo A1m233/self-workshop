@@ -6,14 +6,14 @@
   gap: 20px;
 }
 .calendar-wrapper {
-  height: calc((100vh - 64px - 60px - 112px - 96px) / 2);
+  height: calc((100vh - 64px - 60px - 112px - 96px - 2px) / 2);
   width: 85vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 .reminder-container {
-  height: calc((100vh - 64px - 60px - 112px - 96px) / 2);
+  height: calc((100vh - 64px - 60px - 112px - 96px - 2px) / 2);
   width: 85vw;
   display: flex;
   flex-direction: column;

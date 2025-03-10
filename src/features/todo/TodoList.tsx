@@ -76,8 +76,7 @@ const TodoList: FC<PropsType> = memo(({ pageType, todoList }) =>
           align='center'
           total={searchedTodoList.length}
           showTotal={total => `共 ${total} 个待办事项`}
-          onChange={onPageChange}
-          style={{marginBottom: '20px'}}/>
+          onChange={onPageChange}/>
         </div>
       </div>
     </div>
