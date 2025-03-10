@@ -81,6 +81,7 @@ const TodoModal = forwardRef<TodoModalHandles, PropsType>(({ expiration, content
     <>
       {contextHolder}
       <Modal
+      forceRender
       title={'填写内容以' + actionType + '待办事项'}
       open={isModalOpen}
       onOk={onOk}

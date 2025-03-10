@@ -28,7 +28,7 @@ const TodoList: FC<PropsType> = memo(({ pageType, todoList }) =>
     return searchedTodoList.slice((currentPage - 1) * 10, currentPage * 10).map(todo =>
     {
       return <Todo todo={todo} key={todo.id}/>
-    })
+    });
   }, [searchedTodoList, currentPage]);
 
   const onChange: InputProps['onChange'] = useCallback((e: any) =>
